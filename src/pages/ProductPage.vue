@@ -129,7 +129,7 @@ const selectedImage = ref(0)
 
 const images = computed(() => {
   if (!store.product?.images?.length) return [store.product?.image ?? null]
-  return store.product.images
+  return store.product.images.map(img => typeof img === 'string' ? img : img.url)
 })
 
 const currentImage = computed(() => images.value[selectedImage.value] ?? null)

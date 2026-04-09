@@ -11,10 +11,87 @@
         </router-link>
 
         <!-- Nav links (desktop) -->
-        <nav class="hidden md:flex items-center gap-8">
-          <router-link to="/" class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition">Accueil</router-link>
-          <router-link to="/shop" class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition">Boutique</router-link>
-          <router-link to="/promotions" class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition">Promotions</router-link>
+        <nav class="hidden md:flex items-center gap-1">
+          <router-link to="/" class="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition rounded-lg">Accueil</router-link>
+
+          <!-- Boutique dropdown -->
+          <div class="relative" @mouseenter="openDropdown('shop')" @mouseleave="closeDropdown('shop')">
+            <router-link to="/shop" class="flex items-center gap-1 px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition rounded-lg">
+              Boutique
+              <ChevronDownIcon class="h-3.5 w-3.5" />
+            </router-link>
+            <Transition
+              enter-active-class="transition duration-150 ease-out"
+              enter-from-class="opacity-0 translate-y-1"
+              enter-to-class="opacity-100 translate-y-0"
+              leave-active-class="transition duration-100 ease-in"
+              leave-from-class="opacity-100 translate-y-0"
+              leave-to-class="opacity-0 translate-y-1"
+            >
+              <div v-if="dropdowns.shop" class="absolute left-0 top-full mt-1 w-56 rounded-xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-lg py-2 z-50">
+                <router-link
+                  to="/shop"
+                  class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 font-medium"
+                  @click="closeAll"
+                >
+                  Tous les produits
+                </router-link>
+                <div v-if="categoryStore.categories.length" class="border-t border-gray-100 dark:border-gray-700 mt-1 pt-1">
+                  <p class="px-4 py-1.5 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Categories</p>
+                  <router-link
+                    v-for="cat in categoryStore.categories"
+                    :key="cat.id"
+                    :to="{ name: 'shop', query: { category: cat.id } }"
+                    class="flex items-center justify-between px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400"
+                    @click="closeAll"
+                  >
+                    <span>{{ cat.name }}</span>
+                    <span v-if="cat.products_count != null" class="text-xs text-gray-400 dark:text-gray-500">{{ cat.products_count }}</span>
+                  </router-link>
+                </div>
+              </div>
+            </Transition>
+          </div>
+
+          <!-- Promotions dropdown -->
+          <div class="relative" @mouseenter="openDropdown('promos')" @mouseleave="closeDropdown('promos')">
+            <router-link to="/promotions" class="flex items-center gap-1 px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition rounded-lg">
+              Promotions
+              <ChevronDownIcon v-if="promoStore.promotions.length" class="h-3.5 w-3.5" />
+            </router-link>
+            <Transition
+              enter-active-class="transition duration-150 ease-out"
+              enter-from-class="opacity-0 translate-y-1"
+              enter-to-class="opacity-100 translate-y-0"
+              leave-active-class="transition duration-100 ease-in"
+              leave-from-class="opacity-100 translate-y-0"
+              leave-to-class="opacity-0 translate-y-1"
+            >
+              <div v-if="dropdowns.promos && promoStore.promotions.length" class="absolute left-0 top-full mt-1 w-56 rounded-xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-lg py-2 z-50">
+                <router-link
+                  to="/promotions"
+                  class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 font-medium"
+                  @click="closeAll"
+                >
+                  Toutes les promotions
+                </router-link>
+                <div class="border-t border-gray-100 dark:border-gray-700 mt-1 pt-1">
+                  <router-link
+                    v-for="promo in promoStore.promotions"
+                    :key="promo.id"
+                    :to="{ name: 'promotion', params: { slug: promo.slug } }"
+                    class="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400"
+                    @click="closeAll"
+                  >
+                    <span class="inline-flex items-center rounded-full bg-red-100 dark:bg-red-900/30 px-1.5 py-0.5 text-[10px] font-bold text-red-600 dark:text-red-400">
+                      {{ promo.type === 'percentage' ? `-${promo.value}%` : `-${promo.value}` }}
+                    </span>
+                    <span class="truncate">{{ promo.name }}</span>
+                  </router-link>
+                </div>
+              </div>
+            </Transition>
+          </div>
         </nav>
 
         <!-- Right side -->
@@ -81,30 +158,78 @@
       leave-from-class="opacity-100"
       leave-to-class="opacity-0"
     >
-      <div v-if="mobileOpen" class="md:hidden border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-4 space-y-2">
+      <div v-if="mobileOpen" class="md:hidden border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-4 space-y-1">
         <router-link @click="mobileOpen = false" to="/" class="block rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">Accueil</router-link>
-        <router-link @click="mobileOpen = false" to="/shop" class="block rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">Boutique</router-link>
+        <router-link @click="mobileOpen = false" to="/shop" class="block rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">Tous les produits</router-link>
+
+        <!-- Mobile categories -->
+        <div v-if="categoryStore.categories.length" class="pl-4 space-y-1">
+          <router-link
+            v-for="cat in categoryStore.categories"
+            :key="cat.id"
+            :to="{ name: 'shop', query: { category: cat.id } }"
+            class="block rounded-lg px-4 py-2 text-sm text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
+            @click="mobileOpen = false"
+          >
+            {{ cat.name }}
+          </router-link>
+        </div>
+
         <router-link @click="mobileOpen = false" to="/promotions" class="block rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">Promotions</router-link>
+
+        <!-- Mobile promotions -->
+        <div v-if="promoStore.promotions.length" class="pl-4 space-y-1">
+          <router-link
+            v-for="promo in promoStore.promotions"
+            :key="promo.id"
+            :to="{ name: 'promotion', params: { slug: promo.slug } }"
+            class="block rounded-lg px-4 py-2 text-sm text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
+            @click="mobileOpen = false"
+          >
+            {{ promo.name }}
+          </router-link>
+        </div>
       </div>
     </Transition>
   </header>
 </template>
 
 <script setup>
-import { ref, watch, nextTick } from 'vue'
+import { ref, reactive, watch, nextTick, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCartStore } from '@/stores/cartStore'
 import { useThemeStore } from '@/stores/themeStore'
-import { ShoppingBagIcon, MagnifyingGlassIcon, Bars3Icon, MoonIcon, SunIcon } from '@heroicons/vue/24/outline'
+import { useCategoryStore } from '@/stores/categoryStore'
+import { usePromoStore } from '@/stores/promoStore'
+import { ShoppingBagIcon, MagnifyingGlassIcon, Bars3Icon, MoonIcon, SunIcon, ChevronDownIcon } from '@heroicons/vue/24/outline'
 
 const router = useRouter()
 const cart = useCartStore()
 const theme = useThemeStore()
+const categoryStore = useCategoryStore()
+const promoStore = usePromoStore()
 
 const searchOpen = ref(false)
 const mobileOpen = ref(false)
 const searchQuery = ref('')
 const searchInput = ref(null)
+
+const dropdowns = reactive({ shop: false, promos: false })
+let closeTimers = {}
+
+function openDropdown(key) {
+  clearTimeout(closeTimers[key])
+  dropdowns[key] = true
+}
+
+function closeDropdown(key) {
+  closeTimers[key] = setTimeout(() => { dropdowns[key] = false }, 150)
+}
+
+function closeAll() {
+  dropdowns.shop = false
+  dropdowns.promos = false
+}
 
 watch(searchOpen, (val) => {
   if (val) nextTick(() => searchInput.value?.focus())
@@ -117,4 +242,9 @@ function handleSearch() {
     searchQuery.value = ''
   }
 }
+
+onMounted(() => {
+  categoryStore.fetchCategories()
+  promoStore.fetchPromotions()
+})
 </script>
