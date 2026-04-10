@@ -52,7 +52,8 @@
           </div>
 
           <!-- Description -->
-          <p v-if="store.product.description" class="mt-6 text-gray-600 dark:text-gray-300 leading-relaxed">{{ store.product.description }}</p>
+          <div v-if="store.product.long_description" class="mt-6 prose prose-sm dark:prose-invert max-w-none text-gray-600 dark:text-gray-300" v-html="store.product.long_description"></div>
+          <p v-else-if="store.product.description" class="mt-6 text-gray-600 dark:text-gray-300 leading-relaxed">{{ store.product.description }}</p>
 
           <!-- Stock -->
           <div class="mt-4">
@@ -95,8 +96,6 @@
             </div>
           </div>
 
-          <!-- Long description -->
-          <div v-if="store.product.long_description" class="mt-8 prose prose-sm dark:prose-invert max-w-none text-gray-600 dark:text-gray-300" v-html="store.product.long_description"></div>
         </div>
       </div>
     </template>
