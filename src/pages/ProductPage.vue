@@ -15,7 +15,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
         <!-- Images -->
         <div>
-          <div class="aspect-square rounded-2xl bg-gray-50 dark:bg-gray-800 overflow-hidden">
+          <div class="aspect-square rounded-2xl bg-gray-50 dark:bg-gray-800 overflow-hidden cursor-zoom-in" @click="openLightbox(selectedImage)">
             <img
               :src="imageUrl(currentImage)"
               :alt="store.product.title"
@@ -105,17 +105,76 @@
       <p class="text-gray-500 dark:text-gray-400">Produit introuvable</p>
       <router-link to="/shop" class="mt-4 inline-block text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-700">Retour a la boutique</router-link>
     </div>
+
+    <!-- Fullscreen Lightbox -->
+    <Teleport to="body">
+      <Transition
+        enter-active-class="transition duration-200 ease-out"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="transition duration-150 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+      >
+        <div v-if="lightboxOpen" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/90" @click.self="lightboxOpen = false">
+          <!-- Close button -->
+          <button @click="lightboxOpen = false" class="absolute top-4 right-4 z-10 rounded-full bg-white/10 p-2 text-white hover:bg-white/20 transition">
+            <XMarkIcon class="h-6 w-6" />
+          </button>
+
+          <!-- Counter -->
+          <div v-if="images.length > 1" class="absolute top-4 left-4 rounded-full bg-white/10 px-3 py-1 text-sm text-white">
+            {{ lightboxIndex + 1 }} / {{ images.length }}
+          </div>
+
+          <!-- Prev button -->
+          <button v-if="images.length > 1" @click.stop="prevImage" class="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white hover:bg-white/20 transition">
+            <ChevronLeftIcon class="h-6 w-6" />
+          </button>
+
+          <!-- Image -->
+          <img
+            :src="imageUrl(images[lightboxIndex])"
+            :alt="store.product?.title"
+            class="max-h-[90vh] max-w-[90vw] object-contain select-none"
+            @click.stop
+          />
+
+          <!-- Next button -->
+          <button v-if="images.length > 1" @click.stop="nextImage" class="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-white/10 p-3 text-white hover:bg-white/20 transition">
+            <ChevronRightIconSolid class="h-6 w-6" />
+          </button>
+
+          <!-- Thumbnails -->
+          <div v-if="images.length > 1" class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+            <button
+              v-for="(img, i) in images"
+              :key="i"
+              @click.stop="lightboxIndex = i"
+              :class="[
+                'h-16 w-16 rounded-lg overflow-hidden border-2 transition',
+                lightboxIndex === i ? 'border-white' : 'border-transparent opacity-50 hover:opacity-80'
+              ]"
+            >
+              <img :src="imageUrl(img)" class="h-full w-full object-cover" />
+            </button>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useProductStore } from '@/stores/productStore'
 import { useCartStore } from '@/stores/cartStore'
 import { useFormatPrice } from '@/composables/useFormatPrice'
 import { useImageUrl } from '@/composables/useImageUrl'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
-import { ChevronRightIcon } from '@heroicons/vue/20/solid'
+import { ChevronRightIcon, ChevronLeftIcon } from '@heroicons/vue/20/solid'
+import { ChevronRightIcon as ChevronRightIconSolid } from '@heroicons/vue/20/solid'
+import { XMarkIcon } from '@heroicons/vue/24/outline'
 
 const props = defineProps({ slug: { type: String, required: true } })
 
@@ -126,6 +185,8 @@ const { imageUrl } = useImageUrl()
 
 const qty = ref(1)
 const selectedImage = ref(0)
+const lightboxOpen = ref(false)
+const lightboxIndex = ref(0)
 
 const images = computed(() => {
   if (!store.product?.images?.length) return [store.product?.image ?? null]
@@ -138,13 +199,41 @@ const effectivePrice = computed(() =>
   store.product?.has_promo ? store.product.promo_price_ttc : store.product?.price_ttc
 )
 
+function openLightbox(index) {
+  lightboxIndex.value = index
+  lightboxOpen.value = true
+}
+
+function nextImage() {
+  lightboxIndex.value = (lightboxIndex.value + 1) % images.value.length
+}
+
+function prevImage() {
+  lightboxIndex.value = (lightboxIndex.value - 1 + images.value.length) % images.value.length
+}
+
+function handleKeydown(e) {
+  if (!lightboxOpen.value) return
+  if (e.key === 'Escape') lightboxOpen.value = false
+  if (e.key === 'ArrowRight') nextImage()
+  if (e.key === 'ArrowLeft') prevImage()
+}
+
 function addToCart() {
   if (!store.product?.in_stock) return
   cart.addItem(store.product, qty.value)
   qty.value = 1
 }
 
-onMounted(() => store.fetchProduct(props.slug))
+onMounted(() => {
+  store.fetchProduct(props.slug)
+  document.addEventListener('keydown', handleKeydown)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', handleKeydown)
+})
+
 watch(() => props.slug, (s) => {
   selectedImage.value = 0
   qty.value = 1
