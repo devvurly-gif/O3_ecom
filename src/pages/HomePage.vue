@@ -53,8 +53,9 @@ onMounted(async () => {
       promoStore.fetchPromotions(),
       promoStore.fetchSlides(),
     ])
-    newProducts.value = newRes.data.data ?? newRes.data
-    promoProducts.value = promoRes.data.data ?? promoRes.data
+    // /products is paginated (has current_page) — interceptor keeps it intact
+    newProducts.value = newRes.data.data
+    promoProducts.value = promoRes.data.data
   } catch (e) {
     console.error('Failed to load home data:', e)
   } finally {

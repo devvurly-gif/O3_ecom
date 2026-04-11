@@ -18,8 +18,8 @@
               {{ item.title }}
             </router-link>
             <div class="mt-1 flex items-baseline gap-2">
-              <span class="text-sm font-bold text-primary-600 dark:text-primary-400">{{ formatPrice(item.price) }}</span>
-              <span v-if="item.originalPrice && item.price < item.originalPrice" class="text-xs text-gray-400 dark:text-gray-500 line-through">{{ formatPrice(item.originalPrice) }}</span>
+              <span class="text-sm font-bold text-primary-600 dark:text-primary-400">{{ formatPrice(cart.itemPrice(item)) }}</span>
+              <span v-if="item.has_promo && item.promo_price_ttc != null" class="text-xs text-gray-400 dark:text-gray-500 line-through">{{ formatPrice(item.price_ttc) }}</span>
             </div>
             <div class="mt-4 flex items-center justify-between">
               <div class="flex items-center rounded-lg border border-gray-200 dark:border-gray-600">
@@ -28,7 +28,7 @@
                 <button @click="cart.updateQuantity(item.id, item.quantity + 1)" class="px-3 py-1.5 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-sm">+</button>
               </div>
               <div class="flex items-center gap-4">
-                <span class="text-sm font-semibold text-gray-900 dark:text-white">{{ formatPrice(item.price * item.quantity) }}</span>
+                <span class="text-sm font-semibold text-gray-900 dark:text-white">{{ formatPrice(cart.itemPrice(item) * item.quantity) }}</span>
                 <button @click="cart.removeItem(item.id)" class="text-gray-400 hover:text-red-500 transition">
                   <TrashIcon class="h-4 w-4" />
                 </button>

@@ -11,7 +11,7 @@ export const useCategoryStore = defineStore('category', () => {
     loading.value = true
     try {
       const { data } = await api.get('/categories')
-      categories.value = data.data ?? data
+      categories.value = data
     } catch (e) {
       console.error('Failed to fetch categories:', e)
     } finally {

@@ -46,7 +46,7 @@
           <div class="mt-4 flex items-baseline gap-3">
             <span class="text-3xl font-bold text-gray-900 dark:text-white">{{ formatPrice(effectivePrice) }}</span>
             <span v-if="store.product.has_promo" class="text-lg text-gray-400 dark:text-gray-500 line-through">{{ formatPrice(store.product.price_ttc) }}</span>
-            <span v-if="store.product.has_promo" class="rounded-full bg-red-100 dark:bg-red-900/30 px-3 py-1 text-xs font-bold text-red-600 dark:text-red-400">
+            <span v-if="store.product.has_promo" class="rounded-full bg-red-500 px-3 py-1 text-xs font-bold text-white shadow-sm">
               -{{ store.product.discount_percent }}%
             </span>
           </div>
@@ -100,9 +100,10 @@
       </div>
     </template>
 
-    <div v-else class="py-20 text-center">
-      <p class="text-gray-500 dark:text-gray-400">Produit introuvable</p>
-      <router-link to="/shop" class="mt-4 inline-block text-sm font-medium text-primary-600 dark:text-primary-400 hover:text-primary-700">Retour a la boutique</router-link>
+    <div v-else-if="!store.loading" class="py-20 text-center">
+      <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ store.error === 'not_found' ? 'Produit introuvable' : 'Erreur de chargement' }}</p>
+      <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">{{ store.error === 'not_found' ? 'Ce produit n\'existe pas ou a ete supprime.' : 'Impossible de charger ce produit. Veuillez reessayer.' }}</p>
+      <router-link to="/shop" class="mt-6 inline-block rounded-xl bg-primary-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-primary-700 transition">Retour a la boutique</router-link>
     </div>
 
     <!-- Fullscreen Lightbox -->

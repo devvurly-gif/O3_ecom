@@ -11,7 +11,7 @@ export const usePromoStore = defineStore('promo', () => {
     loading.value = true
     try {
       const { data } = await api.get('/promotions')
-      promotions.value = data.data ?? data
+      promotions.value = data
     } catch (e) {
       console.error('Failed to fetch promotions:', e)
     } finally {
@@ -22,7 +22,7 @@ export const usePromoStore = defineStore('promo', () => {
   async function fetchSlides() {
     try {
       const { data } = await api.get('/slides')
-      slides.value = data.data ?? data
+      slides.value = data
     } catch (e) {
       console.error('Failed to fetch slides:', e)
     }

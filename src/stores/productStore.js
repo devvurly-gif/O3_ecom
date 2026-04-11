@@ -6,6 +6,7 @@ export const useProductStore = defineStore('product', () => {
   const products = ref([])
   const product = ref(null)
   const loading = ref(false)
+  const error = ref(null)
   const pagination = ref({})
 
   async function fetchProducts(params = {}) {
@@ -29,15 +30,17 @@ export const useProductStore = defineStore('product', () => {
   async function fetchProduct(slug) {
     loading.value = true
     product.value = null
+    error.value = null
     try {
       const { data } = await api.get(`/products/${slug}`)
-      product.value = data.data ?? data
+      product.value = data
     } catch (e) {
+      error.value = e.response?.status === 404 ? 'not_found' : 'error'
       console.error('Failed to fetch product:', e)
     } finally {
       loading.value = false
     }
   }
 
-  return { products, product, loading, pagination, fetchProducts, fetchProduct }
+  return { products, product, loading, error, pagination, fetchProducts, fetchProduct }
 })

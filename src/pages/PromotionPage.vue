@@ -58,8 +58,8 @@ async function load(page = 1) {
       api.get('/products', { params: { promo: true, per_page: 12, page } }),
       api.get('/promotions'),
     ])
-    products.value = prodRes.data.data ?? prodRes.data
-    promotions.value = promoRes.data.data ?? promoRes.data
+    products.value = prodRes.data.data  // paginated — interceptor keeps intact
+    promotions.value = promoRes.data     // unwrapped by interceptor
     if (prodRes.data.current_page) {
       pagination.value = {
         currentPage: prodRes.data.current_page,

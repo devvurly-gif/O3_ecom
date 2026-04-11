@@ -32,8 +32,7 @@
                 <router-link
                   to="/shop"
                   class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 font-medium"
-                  @click="closeAll"
-                >
+                                  >
                   Tous les produits
                 </router-link>
                 <div v-if="categoryStore.categories.length" class="border-t border-gray-100 dark:border-gray-700 mt-1 pt-1">
@@ -43,8 +42,7 @@
                     :key="cat.id"
                     :to="{ name: 'shop', query: { category: cat.id } }"
                     class="flex items-center justify-between px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400"
-                    @click="closeAll"
-                  >
+                                      >
                     <span>{{ cat.name }}</span>
                     <span v-if="cat.products_count != null" class="text-xs text-gray-400 dark:text-gray-500">{{ cat.products_count }}</span>
                   </router-link>
@@ -71,8 +69,7 @@
                 <router-link
                   to="/promotions"
                   class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 font-medium"
-                  @click="closeAll"
-                >
+                                  >
                   Toutes les promotions
                 </router-link>
                 <div class="border-t border-gray-100 dark:border-gray-700 mt-1 pt-1">
@@ -81,9 +78,8 @@
                     :key="promo.id"
                     :to="{ name: 'promotion', params: { slug: promo.slug } }"
                     class="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400"
-                    @click="closeAll"
-                  >
-                    <span class="inline-flex items-center rounded-full bg-red-100 dark:bg-red-900/30 px-1.5 py-0.5 text-[10px] font-bold text-red-600 dark:text-red-400">
+                                      >
+                    <span class="inline-flex items-center rounded-full bg-red-500 px-1.5 py-0.5 text-[10px] font-bold text-white">
                       {{ promo.type === 'percentage' ? `-${promo.value}%` : `-${promo.value}` }}
                     </span>
                     <span class="truncate">{{ promo.name }}</span>
@@ -159,8 +155,8 @@
       leave-to-class="opacity-0"
     >
       <div v-if="mobileOpen" class="md:hidden border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 px-4 py-4 space-y-1">
-        <router-link @click="mobileOpen = false" to="/" class="block rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">Accueil</router-link>
-        <router-link @click="mobileOpen = false" to="/shop" class="block rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">Tous les produits</router-link>
+        <router-link to="/" class="block rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">Accueil</router-link>
+        <router-link to="/shop" class="block rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">Tous les produits</router-link>
 
         <!-- Mobile categories -->
         <div v-if="categoryStore.categories.length" class="pl-4 space-y-1">
@@ -169,13 +165,12 @@
             :key="cat.id"
             :to="{ name: 'shop', query: { category: cat.id } }"
             class="block rounded-lg px-4 py-2 text-sm text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
-            @click="mobileOpen = false"
-          >
+                      >
             {{ cat.name }}
           </router-link>
         </div>
 
-        <router-link @click="mobileOpen = false" to="/promotions" class="block rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">Promotions</router-link>
+        <router-link to="/promotions" class="block rounded-lg px-4 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800">Promotions</router-link>
 
         <!-- Mobile promotions -->
         <div v-if="promoStore.promotions.length" class="pl-4 space-y-1">
@@ -184,8 +179,7 @@
             :key="promo.id"
             :to="{ name: 'promotion', params: { slug: promo.slug } }"
             class="block rounded-lg px-4 py-2 text-sm text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
-            @click="mobileOpen = false"
-          >
+                      >
             {{ promo.name }}
           </router-link>
         </div>
@@ -196,7 +190,7 @@
 
 <script setup>
 import { ref, reactive, watch, nextTick, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useCartStore } from '@/stores/cartStore'
 import { useThemeStore } from '@/stores/themeStore'
 import { useCategoryStore } from '@/stores/categoryStore'
@@ -204,6 +198,7 @@ import { usePromoStore } from '@/stores/promoStore'
 import { ShoppingBagIcon, MagnifyingGlassIcon, Bars3Icon, MoonIcon, SunIcon, ChevronDownIcon } from '@heroicons/vue/24/outline'
 
 const router = useRouter()
+const route = useRoute()
 const cart = useCartStore()
 const theme = useThemeStore()
 const categoryStore = useCategoryStore()
@@ -230,6 +225,13 @@ function closeAll() {
   dropdowns.shop = false
   dropdowns.promos = false
 }
+
+// Close mobile menu + search on any route change
+watch(() => route.fullPath, () => {
+  mobileOpen.value = false
+  searchOpen.value = false
+  closeAll()
+})
 
 watch(searchOpen, (val) => {
   if (val) nextTick(() => searchInput.value?.focus())

@@ -23,21 +23,30 @@ export const useCartStore = defineStore('cart', () => {
     items.value.reduce((sum, i) => sum + i.quantity, 0)
   )
 
+  function itemPrice(item) {
+    return item.has_promo && item.promo_price_ttc != null ? item.promo_price_ttc : item.price_ttc
+  }
+
   const totalPrice = computed(() =>
-    items.value.reduce((sum, i) => sum + i.price * i.quantity, 0)
+    items.value.reduce((sum, i) => sum + itemPrice(i) * i.quantity, 0)
   )
 
   function addItem(product, qty = 1) {
     const existing = items.value.find(i => i.id === product.id)
     if (existing) {
       existing.quantity += qty
+      // Refresh price data in case promo status changed
+      existing.price_ttc = product.price_ttc
+      existing.promo_price_ttc = product.promo_price_ttc ?? null
+      existing.has_promo = !!product.has_promo
     } else {
       items.value.push({
         id: product.id,
         title: product.title,
         slug: product.slug,
-        price: product.has_promo ? product.promo_price_ttc : product.price_ttc,
-        originalPrice: product.price_ttc,
+        price_ttc: product.price_ttc,
+        promo_price_ttc: product.promo_price_ttc ?? null,
+        has_promo: !!product.has_promo,
         image: product.image || product.images?.[0]?.url || product.images?.[0] || null,
         quantity: qty,
       })
@@ -66,6 +75,6 @@ export const useCartStore = defineStore('cart', () => {
 
   return {
     items, drawerOpen, totalItems, totalPrice,
-    addItem, updateQuantity, removeItem, clearCart,
+    addItem, updateQuantity, removeItem, clearCart, itemPrice,
   }
 })

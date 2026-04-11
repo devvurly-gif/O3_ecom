@@ -48,4 +48,26 @@ const router = createRouter({
   },
 })
 
+// ── Route loading bar ─────────────────────────────
+// Inject a thin progress bar at the top of the page during route transitions.
+const bar = document.createElement('div')
+bar.id = 'route-progress'
+bar.style.cssText = 'position:fixed;top:0;left:0;height:3px;background:#2563eb;z-index:9999;transition:width .3s ease;width:0;pointer-events:none;'
+document.body.prepend(bar)
+
+router.beforeEach(() => {
+  bar.style.transition = 'width .3s ease'
+  bar.style.width = '70%'
+  bar.style.opacity = '1'
+})
+
+router.afterEach(() => {
+  bar.style.width = '100%'
+  setTimeout(() => {
+    bar.style.transition = 'opacity .3s ease'
+    bar.style.opacity = '0'
+    setTimeout(() => { bar.style.width = '0' }, 300)
+  }, 150)
+})
+
 export default router

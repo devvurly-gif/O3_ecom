@@ -59,4 +59,19 @@ api.interceptors.request.use((config) => {
   return config
 })
 
+// Normalize paginated vs non-paginated responses:
+// - Paginated: { data: [...], current_page, last_page, ... } → keep as-is
+// - Wrapped:   { data: { ... } } (single resource) → unwrap to { ... }
+// - Direct:    [ ... ] → keep as-is
+// Stores can now always use `response.data` directly without `?? data` fallback.
+api.interceptors.response.use((response) => {
+  const d = response.data
+  // If the response has a `data` key and it's NOT a paginated response,
+  // unwrap it so consumers always get the payload directly.
+  if (d && typeof d === 'object' && 'data' in d && !('current_page' in d)) {
+    response.data = d.data
+  }
+  return response
+})
+
 export default api

@@ -72,7 +72,7 @@
           <div class="space-y-3 divide-y divide-gray-200 dark:divide-gray-700">
             <div v-for="item in cart.items" :key="item.id" class="flex justify-between pt-3 first:pt-0 text-sm">
               <span class="text-gray-600 dark:text-gray-400">{{ item.title }} <span class="text-gray-400 dark:text-gray-500">x{{ item.quantity }}</span></span>
-              <span class="font-medium text-gray-900 dark:text-white">{{ formatPrice(item.price * item.quantity) }}</span>
+              <span class="font-medium text-gray-900 dark:text-white">{{ formatPrice(cart.itemPrice(item) * item.quantity) }}</span>
             </div>
           </div>
           <div class="mt-4 border-t border-gray-200 dark:border-gray-700 pt-4 flex justify-between text-base font-bold text-gray-900 dark:text-white">
@@ -142,7 +142,7 @@ async function submitOrder() {
         product_id: item.id,
         designation: item.title,
         quantity: item.quantity,
-        unit_price: item.price,
+        unit_price: cart.itemPrice(item),
         tax_percent: 0,
       })),
     }
