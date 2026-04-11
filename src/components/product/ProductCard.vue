@@ -3,7 +3,7 @@
     <!-- Image -->
     <router-link :to="`/product/${product.slug}`" class="block aspect-square overflow-hidden bg-gray-50 dark:bg-gray-700">
       <img
-        :src="imageUrl(product.image ?? product.images?.[0])"
+        :src="imageUrl(product.image || product.images?.[0]?.url || product.images?.[0])"
         :alt="product.title"
         class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
       />

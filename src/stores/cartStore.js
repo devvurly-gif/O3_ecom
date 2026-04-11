@@ -38,7 +38,7 @@ export const useCartStore = defineStore('cart', () => {
         slug: product.slug,
         price: product.has_promo ? product.promo_price_ttc : product.price_ttc,
         originalPrice: product.price_ttc,
-        image: product.image ?? product.images?.[0] ?? null,
+        image: product.image || product.images?.[0]?.url || product.images?.[0] || null,
         quantity: qty,
       })
     }
