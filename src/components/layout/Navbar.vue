@@ -4,10 +4,11 @@
       <div class="flex h-16 items-center justify-between">
         <!-- Logo -->
         <router-link to="/" class="flex items-center gap-2">
-          <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary-600 text-white font-bold text-lg">
+          <img v-if="shop.logo" :src="logoUrl" :alt="shopName" class="h-9 w-9 rounded-lg object-cover" />
+          <div v-else class="flex h-9 w-9 items-center justify-center rounded-lg bg-primary-600 text-white font-bold text-lg">
             O3
           </div>
-          <span class="text-xl font-bold text-gray-900 dark:text-white hidden sm:block">Store</span>
+          <span class="text-xl font-bold text-gray-900 dark:text-white hidden sm:block">{{ shopName }}</span>
         </router-link>
 
         <!-- Nav links (desktop) -->
@@ -189,12 +190,13 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch, nextTick, onMounted } from 'vue'
+import { ref, reactive, computed, inject, watch, nextTick, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useCartStore } from '@/stores/cartStore'
 import { useThemeStore } from '@/stores/themeStore'
 import { useCategoryStore } from '@/stores/categoryStore'
 import { usePromoStore } from '@/stores/promoStore'
+import { useImageUrl } from '@/composables/useImageUrl'
 import { ShoppingBagIcon, MagnifyingGlassIcon, Bars3Icon, MoonIcon, SunIcon, ChevronDownIcon } from '@heroicons/vue/24/outline'
 
 const router = useRouter()
@@ -203,6 +205,12 @@ const cart = useCartStore()
 const theme = useThemeStore()
 const categoryStore = useCategoryStore()
 const promoStore = usePromoStore()
+const { imageUrl: imgUrl } = useImageUrl()
+
+const config = inject('shopConfig', {})
+const shop = computed(() => config?.shop ?? {})
+const shopName = computed(() => shop.value.name || 'Store')
+const logoUrl = computed(() => shop.value.logo ? imgUrl(shop.value.logo) : null)
 
 const searchOpen = ref(false)
 const mobileOpen = ref(false)

@@ -1,8 +1,10 @@
 <template>
   <div>
+    <!-- 1. Hero Slider -->
     <HeroSlider :slides="promoStore.slides" />
 
-    <FeaturedProducts
+    <!-- 2. Nouveautes (horizontal scroll) -->
+    <NewArrivals
       v-if="newProducts.length"
       title="Nouveautes"
       subtitle="Les derniers produits ajoutes"
@@ -10,8 +12,7 @@
       :link="{ name: 'shop', query: { sort: 'newest' } }"
     />
 
-    <CategoryGrid :categories="categoryStore.categories" />
-
+    <!-- 3. Promotions -->
     <PromoSection :promotions="promoStore.promotions" />
 
     <FeaturedProducts
@@ -21,6 +22,8 @@
       :products="promoProducts"
       link="/promotions"
     />
+
+    <CategoryGrid :categories="categoryStore.categories" />
 
     <LoadingSpinner v-if="loading" />
   </div>
@@ -33,6 +36,7 @@ import { useCategoryStore } from '@/stores/categoryStore'
 import { usePromoStore } from '@/stores/promoStore'
 import HeroSlider from '@/components/home/HeroSlider.vue'
 import CategoryGrid from '@/components/home/CategoryGrid.vue'
+import NewArrivals from '@/components/home/NewArrivals.vue'
 import FeaturedProducts from '@/components/home/FeaturedProducts.vue'
 import PromoSection from '@/components/home/PromoSection.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
@@ -47,7 +51,7 @@ const loading = ref(true)
 onMounted(async () => {
   try {
     const [newRes, promoRes] = await Promise.all([
-      api.get('/products', { params: { new: true, per_page: 8 } }),
+      api.get('/products', { params: { new: true, per_page: 12 } }),
       api.get('/products', { params: { promo: true, per_page: 8 } }),
       categoryStore.fetchCategories(),
       promoStore.fetchPromotions(),
