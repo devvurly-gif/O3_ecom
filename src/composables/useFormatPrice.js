@@ -4,7 +4,7 @@ export function useFormatPrice() {
       style: 'currency',
       currency: 'MAD',
       minimumFractionDigits: 2,
-    }).format(price)
+    }).format(price ?? 0)
   }
 
   return { formatPrice }
