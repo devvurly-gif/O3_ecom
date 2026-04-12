@@ -19,7 +19,7 @@
                 <p v-if="slide.subtitle" class="mt-4 text-base sm:text-lg text-gray-200">{{ slide.subtitle }}</p>
                 <router-link
                   v-if="slide.button_text"
-                  :to="slide.resolved_link || '/shop'"
+                  :to="slide.resolved_link || slide.link || '/shop'"
                   class="mt-6 inline-block rounded-xl bg-primary-600 px-7 py-3 text-sm font-semibold text-white hover:bg-primary-700 transition"
                 >
                   {{ slide.button_text }}
@@ -55,7 +55,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, watch, onUnmounted } from 'vue'
 import { useImageUrl } from '@/composables/useImageUrl'
 
 const props = defineProps({ slides: { type: Array, default: () => [] } })
@@ -64,13 +64,22 @@ const { imageUrl } = useImageUrl()
 const current = ref(0)
 let timer = null
 
-onMounted(() => {
+function startAutoPlay() {
+  clearInterval(timer)
   if (props.slides.length > 1) {
     timer = setInterval(() => {
       current.value = (current.value + 1) % props.slides.length
     }, 5000)
   }
-})
+}
+
+// Watch for slides arriving async (from store)
+watch(() => props.slides.length, (len) => {
+  if (len) {
+    current.value = 0
+    startAutoPlay()
+  }
+}, { immediate: true })
 
 onUnmounted(() => clearInterval(timer))
 </script>

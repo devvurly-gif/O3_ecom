@@ -24,9 +24,12 @@
             </span>
             <h3 class="mt-4 text-lg font-bold">{{ promo.name }}</h3>
             <p v-if="promo.description" class="mt-2 text-sm text-primary-100 line-clamp-2">{{ promo.description }}</p>
-            <p v-if="promo.ends_at" class="mt-3 text-xs text-primary-200">
-              Jusqu'au {{ new Date(promo.ends_at).toLocaleDateString('fr-FR') }}
-            </p>
+            <div class="mt-3 flex items-center justify-between">
+              <p v-if="promo.ends_at" class="text-xs text-primary-200">
+                Jusqu'au {{ new Date(promo.ends_at).toLocaleDateString('fr-FR') }}
+              </p>
+              <span v-if="promo.products_count" class="text-xs text-primary-200">{{ promo.products_count }} produit{{ promo.products_count > 1 ? 's' : '' }}</span>
+            </div>
           </div>
         </router-link>
       </div>
