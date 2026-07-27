@@ -98,6 +98,56 @@
 
         </div>
       </div>
+
+      <!-- Videos -->
+      <div v-if="videos.length" class="mt-12">
+        <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Vidéos</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <button
+            v-for="video in videos"
+            :key="video.id"
+            type="button"
+            class="group relative aspect-video rounded-2xl overflow-hidden bg-gray-900 text-left"
+            @click="openVideo(video)"
+          >
+            <img
+              v-if="thumbnailUrl(video.url)"
+              :src="thumbnailUrl(video.url)"
+              :alt="video.title || 'Vidéo'"
+              class="h-full w-full object-cover opacity-80 group-hover:opacity-60 transition"
+            />
+            <div class="absolute inset-0 flex items-center justify-center">
+              <PlayCircleIcon class="h-14 w-14 text-white drop-shadow-lg group-hover:scale-110 transition" />
+            </div>
+            <p v-if="video.title" class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/70 to-transparent px-3 py-2 text-sm font-medium text-white truncate">
+              {{ video.title }}
+            </p>
+          </button>
+        </div>
+      </div>
+
+      <!-- Documents -->
+      <div v-if="documents.length" class="mt-12">
+        <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Documents</h2>
+        <div class="divide-y divide-gray-100 dark:divide-gray-800 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden">
+          <a
+            v-for="doc in documents"
+            :key="doc.id"
+            :href="fileUrl(doc.url)"
+            target="_blank"
+            rel="noopener"
+            class="flex items-center gap-3 px-4 py-3 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition"
+          >
+            <DocumentArrowDownIcon class="h-6 w-6 flex-shrink-0 text-primary-600 dark:text-primary-400" />
+            <span class="flex-1 min-w-0 truncate text-sm font-medium text-gray-900 dark:text-white">
+              {{ doc.title || doc.file_name }}
+            </span>
+            <span v-if="doc.size" class="flex-shrink-0 text-xs text-gray-400 dark:text-gray-500">
+              {{ fileSize(doc.size) }}
+            </span>
+          </a>
+        </div>
+      </div>
     </template>
 
     <div v-else-if="!store.loading" class="py-20 text-center">
@@ -162,6 +212,44 @@
         </div>
       </Transition>
     </Teleport>
+
+    <!-- Video Modal -->
+    <Teleport to="body">
+      <Transition
+        enter-active-class="transition duration-200 ease-out"
+        enter-from-class="opacity-0"
+        enter-to-class="opacity-100"
+        leave-active-class="transition duration-150 ease-in"
+        leave-from-class="opacity-100"
+        leave-to-class="opacity-0"
+      >
+        <div v-if="activeVideo" class="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4" @click.self="closeVideo">
+          <button @click="closeVideo" class="absolute top-4 right-4 z-10 rounded-full bg-white/10 p-2 text-white hover:bg-white/20 transition">
+            <XMarkIcon class="h-6 w-6" />
+          </button>
+          <div class="w-full max-w-4xl aspect-video">
+            <iframe
+              v-if="activeVideoEmbedUrl"
+              :src="activeVideoEmbedUrl"
+              class="h-full w-full rounded-xl"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+            ></iframe>
+            <div v-else class="flex h-full w-full flex-col items-center justify-center gap-4 rounded-xl bg-gray-900 text-center px-6">
+              <p class="text-white">Cette vidéo ne peut pas être lue ici.</p>
+              <a
+                :href="activeVideo.url"
+                target="_blank"
+                rel="noopener"
+                class="rounded-xl bg-primary-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-primary-700 transition"
+              >
+                Ouvrir la vidéo
+              </a>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
@@ -171,10 +259,12 @@ import { useProductStore } from '@/stores/productStore'
 import { useCartStore } from '@/stores/cartStore'
 import { useFormatPrice } from '@/composables/useFormatPrice'
 import { useImageUrl } from '@/composables/useImageUrl'
+import { useFileUrl } from '@/composables/useFileUrl'
+import { useVideoEmbed } from '@/composables/useVideoEmbed'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 import { ChevronRightIcon, ChevronLeftIcon } from '@heroicons/vue/20/solid'
 import { ChevronRightIcon as ChevronRightIconSolid } from '@heroicons/vue/20/solid'
-import { XMarkIcon } from '@heroicons/vue/24/outline'
+import { XMarkIcon, PlayCircleIcon, DocumentArrowDownIcon } from '@heroicons/vue/24/outline'
 
 const props = defineProps({ slug: { type: String, required: true } })
 
@@ -182,11 +272,14 @@ const store = useProductStore()
 const cart = useCartStore()
 const { formatPrice } = useFormatPrice()
 const { imageUrl } = useImageUrl()
+const { fileUrl, fileSize } = useFileUrl()
+const { embedUrl, thumbnailUrl } = useVideoEmbed()
 
 const qty = ref(1)
 const selectedImage = ref(0)
 const lightboxOpen = ref(false)
 const lightboxIndex = ref(0)
+const activeVideo = ref(null)
 
 const images = computed(() => {
   if (!store.product?.images?.length) return [store.product?.image ?? null]
@@ -194,6 +287,10 @@ const images = computed(() => {
 })
 
 const currentImage = computed(() => images.value[selectedImage.value] ?? null)
+
+const videos = computed(() => store.product?.videos ?? [])
+const documents = computed(() => store.product?.documents ?? [])
+const activeVideoEmbedUrl = computed(() => activeVideo.value ? embedUrl(activeVideo.value.url) : null)
 
 const effectivePrice = computed(() =>
   store.product?.has_promo ? store.product.promo_price_ttc : store.product?.price_ttc
@@ -212,7 +309,19 @@ function prevImage() {
   lightboxIndex.value = (lightboxIndex.value - 1 + images.value.length) % images.value.length
 }
 
+function openVideo(video) {
+  activeVideo.value = video
+}
+
+function closeVideo() {
+  activeVideo.value = null
+}
+
 function handleKeydown(e) {
+  if (activeVideo.value) {
+    if (e.key === 'Escape') closeVideo()
+    return
+  }
   if (!lightboxOpen.value) return
   if (e.key === 'Escape') lightboxOpen.value = false
   if (e.key === 'ArrowRight') nextImage()
