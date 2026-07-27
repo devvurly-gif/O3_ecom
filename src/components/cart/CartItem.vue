@@ -9,12 +9,16 @@
       <router-link :to="`/product/${item.slug}`" class="text-sm font-medium text-gray-900 dark:text-white hover:text-primary-600 dark:hover:text-primary-400 line-clamp-1">
         {{ item.title }}
       </router-link>
+      <!-- Variant badge -->
+      <span v-if="item.variant_label" class="inline-block mt-0.5 px-2 py-0.5 text-xs rounded-full bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 font-medium">
+        {{ item.variant_label }}
+      </span>
       <p class="mt-1 text-sm font-semibold text-primary-600 dark:text-primary-400">{{ formatPrice(cart.itemPrice(item)) }}</p>
       <div class="mt-2 flex items-center gap-2">
-        <button @click="cart.updateQuantity(item.id, item.quantity - 1)" class="flex h-7 w-7 items-center justify-center rounded-md border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 text-xs">-</button>
+        <button @click="cart.updateQuantity(item._key, item.quantity - 1)" class="flex h-7 w-7 items-center justify-center rounded-md border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 text-xs">-</button>
         <span class="w-6 text-center text-sm font-medium text-gray-900 dark:text-white">{{ item.quantity }}</span>
-        <button @click="cart.updateQuantity(item.id, item.quantity + 1)" class="flex h-7 w-7 items-center justify-center rounded-md border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 text-xs">+</button>
-        <button @click="cart.removeItem(item.id)" class="ml-auto text-gray-400 hover:text-red-500 transition">
+        <button @click="cart.updateQuantity(item._key, item.quantity + 1)" class="flex h-7 w-7 items-center justify-center rounded-md border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600 text-xs">+</button>
+        <button @click="cart.removeItem(item._key)" class="ml-auto text-gray-400 hover:text-red-500 transition">
           <TrashIcon class="h-4 w-4" />
         </button>
       </div>

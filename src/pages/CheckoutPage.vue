@@ -10,9 +10,66 @@
     <div v-else-if="!submitted" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <!-- Form -->
       <div class="lg:col-span-2">
-        <form @submit.prevent="submitOrder" class="space-y-6">
+        <!-- Step 1: email-first lookup -->
+        <div v-if="step === 'email'" class="rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-6 space-y-5">
+          <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Votre email</h2>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Entrez votre email pour continuer. Si vous avez déjà commandé chez nous, vos informations seront pré-remplies.</p>
+
+          <form @submit.prevent="checkEmail">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Email</label>
+            <input
+              v-model="form.email"
+              type="email"
+              required
+              autofocus
+              class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 text-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+            />
+
+            <p v-if="lookupError" class="mt-3 text-sm text-red-600 dark:text-red-400">{{ lookupError }}</p>
+
+            <button
+              type="submit"
+              :disabled="lookupLoading"
+              :class="[
+                'mt-4 w-full rounded-xl py-3 text-sm font-semibold text-white transition',
+                lookupLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-primary-600 hover:bg-primary-700',
+              ]"
+            >
+              {{ lookupLoading ? 'Vérification...' : 'Continuer' }}
+            </button>
+          </form>
+
+          <!-- Shown once we know this email isn't registered yet -->
+          <div v-if="notRegistered" class="rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 p-4">
+            <p class="text-sm text-amber-700 dark:text-amber-400 mb-3">Cet email n'est pas encore enregistré.</p>
+            <button
+              type="button"
+              class="w-full rounded-xl py-2.5 text-sm font-semibold text-primary-700 dark:text-primary-400 bg-white dark:bg-gray-800 border border-primary-300 dark:border-primary-700 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition"
+              @click="startAsNewCustomer"
+            >
+              Nouveau client — continuer
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 2: full delivery form (prefilled if returning customer) -->
+        <form v-else @submit.prevent="submitOrder" class="space-y-6">
           <div class="rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-6 space-y-5">
-            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Informations de livraison</h2>
+            <div class="flex items-center justify-between">
+              <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Informations de livraison</h2>
+              <button type="button" class="text-xs font-medium text-primary-600 dark:text-primary-400 hover:underline" @click="backToEmail">
+                Modifier l'email
+              </button>
+            </div>
+
+            <p v-if="isReturning" class="text-sm text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 rounded-lg px-3 py-2">
+              Bienvenue de nouveau, {{ form.name }} — vérifiez vos informations de livraison ci-dessous.
+            </p>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Email</label>
+              <input :value="form.email" type="email" disabled class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 px-4 py-2.5 text-sm cursor-not-allowed" />
+            </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
@@ -23,11 +80,6 @@
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Telephone</label>
                 <input v-model="form.phone" type="tel" required class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 text-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20" />
               </div>
-            </div>
-
-            <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Email</label>
-              <input v-model="form.email" type="email" required class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 text-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20" />
             </div>
 
             <div>
@@ -115,6 +167,15 @@ const loading = ref(false)
 const error = ref('')
 const orderReference = ref('')
 
+// Email-first step: 'email' (just asking for the address) → 'form' (full
+// delivery form, prefilled automatically when the email matches an
+// existing customer of this tenant).
+const step = ref('email')
+const lookupLoading = ref(false)
+const lookupError = ref('')
+const notRegistered = ref(false)
+const isReturning = ref(false)
+
 const form = reactive({
   name: '',
   phone: '',
@@ -123,6 +184,48 @@ const form = reactive({
   city: '',
   notes: '',
 })
+
+async function checkEmail() {
+  lookupError.value = ''
+  notRegistered.value = false
+  lookupLoading.value = true
+
+  try {
+    const res = await api.get('/customers/lookup', { params: { email: form.email } })
+    if (res.data.exists) {
+      form.name = res.data.customer.name || ''
+      form.phone = res.data.customer.phone || ''
+      form.address = res.data.customer.address || ''
+      form.city = res.data.customer.city || ''
+      isReturning.value = true
+      step.value = 'form'
+    } else {
+      notRegistered.value = true
+    }
+  } catch (e) {
+    // Lookup is a convenience, not a gate — if it fails, let the
+    // customer proceed as a new customer rather than blocking checkout.
+    notRegistered.value = true
+  } finally {
+    lookupLoading.value = false
+  }
+}
+
+function startAsNewCustomer() {
+  isReturning.value = false
+  notRegistered.value = false
+  step.value = 'form'
+}
+
+function backToEmail() {
+  step.value = 'email'
+  notRegistered.value = false
+  isReturning.value = false
+  form.name = ''
+  form.phone = ''
+  form.address = ''
+  form.city = ''
+}
 
 async function submitOrder() {
   loading.value = true
