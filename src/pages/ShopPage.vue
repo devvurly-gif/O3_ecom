@@ -1,5 +1,5 @@
 <template>
-  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+  <div class="mx-auto max-w-9xl px-4 sm:px-6 lg:px-8 py-8">
     <!-- Header -->
     <div class="mb-8">
       <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Boutique</h1>
