@@ -1,5 +1,5 @@
 <template>
-  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8">
+  <div class="grid gap-6 sm:gap-8" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr))">
     <ProductCard v-for="product in products" :key="product.id" :product="product" />
   </div>
 </template>

@@ -67,7 +67,7 @@
           </div>
           <div class="field flex-1">
             <label>Max</label>
-            <input v-model.number="priceMaxInput" type="number" min="0" inputmode="numeric" class="input" placeholder="—" />
+            <input v-model.number="priceMaxInput" type="number" min="0" inputmode="numeric" class="input" placeholder="Illimité" />
           </div>
         </div>
         <button type="submit" class="btn btn-secondary btn-block">Appliquer</button>
