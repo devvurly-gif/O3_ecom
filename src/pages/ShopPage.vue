@@ -1,8 +1,8 @@
 <template>
   <div class="mx-auto max-w-9xl px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
     <!-- Header -->
-    <div class="mb-6">
-      <h1 class="text-2xl sm:text-3xl text-ink">Boutique</h1>
+    <div class="mb-6 flex">
+      <h1 class="text-2xl sm:text-3xl text-ink flex-1">Boutique</h1>
       <p v-if="store.pagination.total" class="mt-1 text-sm text-neutral-600">{{ store.pagination.total }} produits</p>
     </div>
     <hr class="hr mb-10" />
