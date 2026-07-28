@@ -3,18 +3,15 @@
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between mb-8">
         <div>
-          <h2 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">{{ title }}</h2>
-          <p v-if="subtitle" class="mt-1 text-gray-500 dark:text-gray-400">{{ subtitle }}</p>
+          <h2 class="text-2xl sm:text-3xl text-ink">{{ title }}</h2>
+          <p v-if="subtitle" class="mt-1 text-neutral-600">{{ subtitle }}</p>
         </div>
-        <router-link :to="link" class="hidden sm:inline-flex items-center gap-1 text-sm font-medium text-primary-600 hover:text-primary-700 transition">
+        <router-link :to="link" class="btn-ghost font-extrabold text-sm inline-flex items-center gap-1">
           Voir tout
           <ArrowRightIcon class="h-4 w-4" />
         </router-link>
       </div>
       <ProductGrid :products="products" />
-      <div class="mt-6 text-center sm:hidden">
-        <router-link :to="link" class="text-sm font-medium text-primary-600 hover:text-primary-700">Voir tout &rarr;</router-link>
-      </div>
     </div>
   </section>
 </template>

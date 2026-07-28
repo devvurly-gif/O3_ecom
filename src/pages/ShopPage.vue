@@ -1,14 +1,15 @@
 <template>
   <div class="mx-auto max-w-9xl px-4 sm:px-6 lg:px-8 py-8">
     <!-- Header -->
-    <div class="mb-8">
-      <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Boutique</h1>
-      <p v-if="store.pagination.total" class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ store.pagination.total }} produits</p>
+    <div class="mb-6">
+      <h1 class="text-2xl sm:text-3xl text-ink">Boutique</h1>
+      <p v-if="store.pagination.total" class="mt-1 text-sm text-neutral-600">{{ store.pagination.total }} produits</p>
     </div>
+    <hr class="hr mb-8" />
 
     <div class="flex flex-col lg:flex-row gap-8">
-      <!-- Sidebar filters (desktop) -->
-      <div class="hidden lg:block w-64 shrink-0">
+      <!-- Sidebar filters -->
+      <div class="w-full lg:w-64 shrink-0">
         <ProductFilters
           :categories="categoryStore.categories"
           :selected-category="filters.category_id"
@@ -18,38 +19,15 @@
         />
       </div>
 
-      <!-- Mobile filters -->
-      <div class="lg:hidden flex gap-3">
-        <select
-          @change="setCategory($event.target.value ? Number($event.target.value) : null)"
-          class="flex-1 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-300"
-        >
-          <option value="">Toutes les categories</option>
-          <option v-for="cat in categoryStore.categories" :key="cat.id" :value="cat.id" :selected="filters.category_id === cat.id">
-            {{ cat.name }}
-          </option>
-        </select>
-        <select
-          @change="setSort($event.target.value)"
-          class="flex-1 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2.5 text-sm text-gray-700 dark:text-gray-300"
-        >
-          <option value="">Trier par</option>
-          <option value="newest">Plus recents</option>
-          <option value="price_asc">Prix croissant</option>
-          <option value="price_desc">Prix decroissant</option>
-          <option value="name">Nom A-Z</option>
-        </select>
-      </div>
-
       <!-- Products -->
       <div class="flex-1">
         <LoadingSpinner v-if="store.loading" />
         <template v-else>
           <ProductGrid v-if="store.products.length" :products="store.products" />
           <div v-else class="flex flex-col items-center justify-center py-20 text-center">
-            <MagnifyingGlassIcon class="h-12 w-12 text-gray-300 dark:text-gray-600" />
-            <p class="mt-4 text-gray-500 dark:text-gray-400">Aucun produit trouve</p>
-            <button @click="resetFilters" class="mt-4 text-sm font-medium text-primary-600 hover:text-primary-700">Reinitialiser les filtres</button>
+            <MagnifyingGlassIcon class="h-12 w-12 text-neutral-400" />
+            <p class="mt-4 text-neutral-600">Aucun produit trouve</p>
+            <button @click="resetFilters" class="btn-ghost mt-4 font-bold text-sm">Reinitialiser les filtres</button>
           </div>
           <Pagination
             :current-page="store.pagination.currentPage"

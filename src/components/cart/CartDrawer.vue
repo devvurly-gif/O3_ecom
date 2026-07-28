@@ -8,7 +8,7 @@
       leave-from-class="opacity-100"
       leave-to-class="opacity-0"
     >
-      <div v-if="cart.drawerOpen" class="fixed inset-0 z-50 bg-black/40" @click="cart.drawerOpen = false"></div>
+      <div v-if="cart.drawerOpen" class="dialog-backdrop fixed inset-0 z-50" @click="cart.drawerOpen = false"></div>
     </Transition>
 
     <Transition
@@ -19,11 +19,11 @@
       leave-from-class="translate-x-0"
       leave-to-class="translate-x-full"
     >
-      <div v-if="cart.drawerOpen" class="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-white dark:bg-gray-900 shadow-2xl flex flex-col">
+      <div v-if="cart.drawerOpen" class="fixed inset-y-0 right-0 z-50 w-full max-w-[440px] bg-bg border-l-2 border-divider shadow-[var(--shadow-lg)] flex flex-col">
         <!-- Header -->
-        <div class="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 px-6 py-4">
-          <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Panier ({{ cart.totalItems }})</h2>
-          <button @click="cart.drawerOpen = false" class="rounded-full p-1.5 text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-600 dark:hover:text-gray-300 transition">
+        <div class="flex items-center justify-between border-b border-divider px-6 py-4">
+          <h2 class="text-lg text-ink">Panier ({{ cart.totalItems }})</h2>
+          <button @click="cart.drawerOpen = false" class="btn-ghost">
             <XMarkIcon class="h-5 w-5" />
           </button>
         </div>
@@ -34,12 +34,12 @@
         </div>
         <div v-else class="flex-1 flex items-center justify-center">
           <div class="text-center">
-            <ShoppingBagIcon class="mx-auto h-12 w-12 text-gray-300 dark:text-gray-600" />
-            <p class="mt-3 text-sm text-gray-500 dark:text-gray-400">Votre panier est vide</p>
+            <ShoppingBagIcon class="mx-auto h-12 w-12 text-neutral-400" />
+            <p class="mt-3 text-sm text-neutral-600">Votre panier est vide</p>
             <router-link
               @click="cart.drawerOpen = false"
               to="/shop"
-              class="mt-4 inline-block rounded-lg bg-primary-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-primary-700 transition"
+              class="btn btn-primary mt-4"
             >
               Voir la boutique
             </router-link>
@@ -47,8 +47,8 @@
         </div>
 
         <!-- Footer -->
-        <div v-if="cart.items.length" class="border-t border-gray-100 dark:border-gray-800 px-6 py-4 space-y-4">
-          <div class="flex items-center justify-between text-base font-semibold text-gray-900 dark:text-white">
+        <div v-if="cart.items.length" class="border-t border-divider px-6 py-4 space-y-4">
+          <div class="flex items-center justify-between text-[17px] font-extrabold text-ink">
             <span>Total</span>
             <span>{{ formatPrice(cart.totalPrice) }}</span>
           </div>
@@ -56,14 +56,14 @@
             <router-link
               @click="cart.drawerOpen = false"
               to="/cart"
-              class="rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-2.5 text-center text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition"
+              class="btn btn-secondary"
             >
               Voir le panier
             </router-link>
             <router-link
               @click="cart.drawerOpen = false"
               to="/checkout"
-              class="rounded-lg bg-primary-600 px-4 py-2.5 text-center text-sm font-medium text-white hover:bg-primary-700 transition"
+              class="btn btn-primary"
             >
               Commander
             </router-link>

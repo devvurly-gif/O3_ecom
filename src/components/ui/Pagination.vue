@@ -1,15 +1,11 @@
 <template>
-  <nav v-if="lastPage > 1" class="mt-8 flex justify-center gap-1">
+  <nav v-if="lastPage > 1" class="mt-8 flex justify-center gap-2">
     <button
       v-for="page in pages"
       :key="page"
       @click="$emit('changePage', page)"
-      :class="[
-        'rounded-lg px-3.5 py-2 text-sm font-medium transition',
-        page === currentPage
-          ? 'bg-primary-600 text-white'
-          : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700',
-      ]"
+      class="btn"
+      :class="page === currentPage ? 'btn-primary' : 'btn-secondary'"
     >
       {{ page }}
     </button>

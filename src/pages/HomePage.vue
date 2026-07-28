@@ -3,7 +3,9 @@
     <!-- 1. Hero Slider -->
     <HeroSlider :slides="promoStore.slides" />
 
-    <!-- 2. Nouveautes (horizontal scroll) -->
+    <hr class="hr" />
+
+    <!-- 2. Nouveautes -->
     <NewArrivals
       v-if="newProducts.length"
       title="Nouveautes"
@@ -12,8 +14,12 @@
       :link="{ name: 'shop', query: { sort: 'newest' } }"
     />
 
+    <hr class="hr" />
+
     <!-- 3. Promotions -->
     <PromoSection :promotions="promoStore.promotions" />
+
+    <hr class="hr" />
 
     <FeaturedProducts
       v-if="promoProducts.length"
@@ -22,6 +28,8 @@
       :products="promoProducts"
       link="/promotions"
     />
+
+    <hr class="hr" />
 
     <CategoryGrid :categories="categoryStore.categories" />
 

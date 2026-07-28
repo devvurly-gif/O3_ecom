@@ -1,50 +1,50 @@
 <template>
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-8">Passer la commande</h1>
+    <h1 class="text-2xl sm:text-3xl text-ink mb-8">Passer la commande</h1>
 
     <div v-if="!cart.items.length && !submitted" class="py-20 text-center">
-      <p class="text-gray-500 dark:text-gray-400">Votre panier est vide</p>
-      <router-link to="/shop" class="mt-4 inline-block text-sm font-medium text-primary-600 dark:text-primary-400">Voir la boutique</router-link>
+      <p class="text-neutral-600">Votre panier est vide</p>
+      <router-link to="/shop" class="mt-4 inline-block text-sm font-bold text-accent-500">Voir la boutique</router-link>
     </div>
 
     <div v-else-if="!submitted" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <!-- Form -->
       <div class="lg:col-span-2">
         <!-- Step 1: email-first lookup -->
-        <div v-if="step === 'email'" class="rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-6 space-y-5">
-          <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Votre email</h2>
-          <p class="text-sm text-gray-500 dark:text-gray-400">Entrez votre email pour continuer. Si vous avez déjà commandé chez nous, vos informations seront pré-remplies.</p>
+        <div v-if="step === 'email'" class="card border border-divider space-y-5">
+          <h2 class="card-title">Votre email</h2>
+          <p class="text-sm text-neutral-600">Entrez votre email pour continuer. Si vous avez déjà commandé chez nous, vos informations seront pré-remplies.</p>
 
           <form @submit.prevent="checkEmail">
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Email</label>
-            <input
-              v-model="form.email"
-              type="email"
-              required
-              autofocus
-              class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 text-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
-            />
+            <div class="field">
+              <label>Email</label>
+              <input
+                v-model="form.email"
+                type="email"
+                required
+                autofocus
+                class="input"
+              />
+            </div>
 
-            <p v-if="lookupError" class="mt-3 text-sm text-red-600 dark:text-red-400">{{ lookupError }}</p>
+            <p v-if="lookupError" class="mt-3 text-sm text-accent-700">{{ lookupError }}</p>
 
             <button
               type="submit"
               :disabled="lookupLoading"
-              :class="[
-                'mt-4 w-full rounded-xl py-3 text-sm font-semibold text-white transition',
-                lookupLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-primary-600 hover:bg-primary-700',
-              ]"
+              class="btn btn-primary btn-block mt-4"
+              :class="{ 'opacity-45 cursor-not-allowed': lookupLoading }"
             >
               {{ lookupLoading ? 'Vérification...' : 'Continuer' }}
             </button>
           </form>
 
           <!-- Shown once we know this email isn't registered yet -->
-          <div v-if="notRegistered" class="rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 p-4">
-            <p class="text-sm text-amber-700 dark:text-amber-400 mb-3">Cet email n'est pas encore enregistré.</p>
+          <div v-if="notRegistered" style="background: var(--color-accent-100); border: 1px solid var(--color-accent-300); color: var(--color-accent-800)" class="p-4">
+            <p class="text-sm mb-3">Cet email n'est pas encore enregistré.</p>
             <button
               type="button"
-              class="w-full rounded-xl py-2.5 text-sm font-semibold text-primary-700 dark:text-primary-400 bg-white dark:bg-gray-800 border border-primary-300 dark:border-primary-700 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition"
+              class="btn btn-secondary btn-block"
               @click="startAsNewCustomer"
             >
               Nouveau client — continuer
@@ -54,63 +54,61 @@
 
         <!-- Step 2: full delivery form (prefilled if returning customer) -->
         <form v-else @submit.prevent="submitOrder" class="space-y-6">
-          <div class="rounded-2xl bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-6 space-y-5">
+          <div class="card border border-divider space-y-5">
             <div class="flex items-center justify-between">
-              <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Informations de livraison</h2>
-              <button type="button" class="text-xs font-medium text-primary-600 dark:text-primary-400 hover:underline" @click="backToEmail">
+              <h2 class="card-title">Informations de livraison</h2>
+              <button type="button" class="text-xs font-bold text-accent-500 hover:underline" @click="backToEmail">
                 Modifier l'email
               </button>
             </div>
 
-            <p v-if="isReturning" class="text-sm text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900/20 rounded-lg px-3 py-2">
+            <p v-if="isReturning" class="text-sm p-3" style="background: var(--color-accent-100); color: var(--color-accent-800)">
               Bienvenue de nouveau, {{ form.name }} — vérifiez vos informations de livraison ci-dessous.
             </p>
 
-            <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Email</label>
-              <input :value="form.email" type="email" disabled class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-gray-500 dark:text-gray-400 px-4 py-2.5 text-sm cursor-not-allowed" />
+            <div class="field">
+              <label>Email</label>
+              <input :value="form.email" type="email" disabled class="input" />
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Nom complet</label>
-                <input v-model="form.name" type="text" required class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 text-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20" />
+              <div class="field">
+                <label>Nom complet</label>
+                <input v-model="form.name" type="text" required class="input" />
               </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Telephone</label>
-                <input v-model="form.phone" type="tel" required class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 text-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20" />
+              <div class="field">
+                <label>Telephone</label>
+                <input v-model="form.phone" type="tel" required class="input" />
               </div>
             </div>
 
-            <div>
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Adresse</label>
-              <input v-model="form.address" type="text" required class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 text-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20" />
+            <div class="field">
+              <label>Adresse</label>
+              <input v-model="form.address" type="text" required class="input" />
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Ville</label>
-                <input v-model="form.city" type="text" required class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 text-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20" />
+              <div class="field">
+                <label>Ville</label>
+                <input v-model="form.city" type="text" required class="input" />
               </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Notes (optionnel)</label>
-                <input v-model="form.notes" type="text" class="w-full rounded-lg border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2.5 text-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20" />
+              <div class="field">
+                <label>Notes (optionnel)</label>
+                <input v-model="form.notes" type="text" class="input" />
               </div>
             </div>
           </div>
 
           <!-- Error message -->
-          <div v-if="error" class="rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 p-4">
-            <p class="text-sm text-red-600 dark:text-red-400">{{ error }}</p>
+          <div v-if="error" class="border border-accent-300 p-4" style="background: var(--color-accent-100)">
+            <p class="text-sm text-accent-800">{{ error }}</p>
           </div>
 
           <button
             type="submit"
             :disabled="loading"
-            :class="[
-              'w-full rounded-xl py-3.5 text-sm font-semibold text-white transition',
-              loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-primary-600 hover:bg-primary-700',
-            ]"
+            class="btn btn-primary btn-block"
+            :class="{ 'opacity-45 cursor-not-allowed': loading }"
           >
             {{ loading ? 'Envoi en cours...' : 'Confirmer la commande' }}
           </button>
@@ -119,15 +117,16 @@
 
       <!-- Order summary -->
       <div>
-        <div class="sticky top-24 rounded-2xl bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-6">
-          <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Votre commande</h2>
-          <div class="space-y-3 divide-y divide-gray-200 dark:divide-gray-700">
-            <div v-for="item in cart.items" :key="item.id" class="flex justify-between pt-3 first:pt-0 text-sm">
-              <span class="text-gray-600 dark:text-gray-400">{{ item.title }} <span class="text-gray-400 dark:text-gray-500">x{{ item.quantity }}</span></span>
-              <span class="font-medium text-gray-900 dark:text-white">{{ formatPrice(cart.itemPrice(item) * item.quantity) }}</span>
+        <div class="sticky top-24 card border border-divider">
+          <h2 class="card-title mb-2">Votre commande</h2>
+          <div class="space-y-3">
+            <div v-for="item in cart.items" :key="item.id" class="flex justify-between pt-3 first:pt-0 border-t border-divider first:border-t-0 text-sm">
+              <span class="text-neutral-600">{{ item.title }} <span class="text-neutral-500">x{{ item.quantity }}</span></span>
+              <span class="font-medium text-ink">{{ formatPrice(cart.itemPrice(item) * item.quantity) }}</span>
             </div>
           </div>
-          <div class="mt-4 border-t border-gray-200 dark:border-gray-700 pt-4 flex justify-between text-base font-bold text-gray-900 dark:text-white">
+          <hr class="hr" />
+          <div class="flex justify-between text-base font-extrabold text-ink">
             <span>Total</span>
             <span>{{ formatPrice(cart.totalPrice) }}</span>
           </div>
@@ -137,15 +136,15 @@
 
     <!-- Success -->
     <div v-else class="py-20 text-center">
-      <div class="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
-        <CheckIcon class="h-8 w-8 text-green-600 dark:text-green-400" />
+      <div class="mx-auto flex h-16 w-16 items-center justify-center bg-accent-500">
+        <CheckIcon class="h-8 w-8 text-bg" />
       </div>
-      <h2 class="mt-6 text-2xl font-bold text-gray-900 dark:text-white">Commande envoyee !</h2>
-      <p class="mt-2 text-gray-500 dark:text-gray-400">Merci pour votre commande. Votre devis a ete cree avec succes.</p>
-      <p v-if="orderReference" class="mt-3 text-lg font-semibold text-primary-600 dark:text-primary-400">
+      <h2 class="mt-6 text-2xl text-ink">Commande envoyee !</h2>
+      <p class="mt-2 text-neutral-600">Merci pour votre commande. Votre devis a ete cree avec succes.</p>
+      <p v-if="orderReference" class="mt-3 text-lg font-extrabold text-accent-800">
         Reference : {{ orderReference }}
       </p>
-      <router-link to="/" class="mt-6 inline-block rounded-xl bg-primary-600 px-8 py-3 text-sm font-semibold text-white hover:bg-primary-700 transition">
+      <router-link to="/" class="btn btn-primary mt-6 inline-flex">
         Retour a l'accueil
       </router-link>
     </div>

@@ -1,7 +1,7 @@
 <template>
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-    <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">Promotions</h1>
-    <p class="text-gray-500 dark:text-gray-400 mb-8">Profitez de nos meilleures offres</p>
+    <h1 class="text-2xl sm:text-3xl text-ink mb-2">Promotions</h1>
+    <p class="text-neutral-600 mb-8">Profitez de nos meilleures offres</p>
 
     <LoadingSpinner v-if="loading" />
 
@@ -12,19 +12,23 @@
           v-for="promo in promotions"
           :key="promo.id"
           :to="{ name: 'promotion', params: { slug: promo.slug } }"
-          class="group rounded-2xl bg-gradient-to-br from-primary-600 to-primary-800 p-6 text-white hover:from-primary-700 hover:to-primary-900 transition"
+          class="card border border-divider hover:bg-neutral-100 transition"
         >
-          <span class="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-xs font-bold">
+          <span class="tag tag-outline self-start">
             {{ promo.type === 'percentage' ? `-${promo.value}%` : `-${promo.value} MAD` }}
           </span>
-          <h3 class="mt-3 text-lg font-bold">{{ promo.name }}</h3>
-          <p v-if="promo.description" class="mt-1 text-sm text-primary-100 line-clamp-2">{{ promo.description }}</p>
+          <h3 class="card-title">{{ promo.name }}</h3>
+          <p v-if="promo.description" class="card-body line-clamp-2">{{ promo.description }}</p>
+          <div class="card-meta justify-between">
+            <span v-if="promo.ends_at">Jusqu'au {{ new Date(promo.ends_at).toLocaleDateString('fr-FR') }}</span>
+            <span v-if="promo.products_count">{{ promo.products_count }} produit{{ promo.products_count > 1 ? 's' : '' }}</span>
+          </div>
         </router-link>
       </div>
 
       <!-- Products -->
       <ProductGrid v-if="products.length" :products="products" />
-      <div v-else class="py-20 text-center text-gray-500 dark:text-gray-400">
+      <div v-else class="py-20 text-center text-neutral-600">
         Aucun produit en promotion actuellement
       </div>
 

@@ -1,5 +1,5 @@
 <template>
-  <section class="relative overflow-hidden bg-gray-900 text-white">
+  <section class="relative overflow-hidden bg-neutral-900 text-white">
     <div v-if="slides.length" class="relative h-[420px] sm:h-[500px]">
       <TransitionGroup
         enter-active-class="transition duration-700 ease-out"
@@ -10,17 +10,17 @@
         leave-to-class="opacity-0"
       >
         <div v-for="(slide, i) in slides" :key="slide.id" v-show="current === i" class="absolute inset-0">
-          <img :src="imageUrl(slide.image)" :alt="slide.title" class="h-full w-full object-cover" />
+          <img :src="imageUrl(slide.image)" :alt="slide.title" class="grayscale h-full w-full object-cover" />
           <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent"></div>
           <div class="absolute inset-0 flex items-center">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">
               <div class="max-w-lg">
-                <h2 class="text-3xl sm:text-5xl font-extrabold leading-tight">{{ slide.title }}</h2>
-                <p v-if="slide.subtitle" class="mt-4 text-base sm:text-lg text-gray-200">{{ slide.subtitle }}</p>
+                <h2 class="text-[44px] font-extrabold leading-tight">{{ slide.title }}</h2>
+                <p v-if="slide.subtitle" class="mt-4 text-base sm:text-lg text-neutral-200">{{ slide.subtitle }}</p>
                 <router-link
                   v-if="slide.button_text"
                   :to="slide.resolved_link || slide.link || '/shop'"
-                  class="mt-6 inline-block rounded-xl bg-primary-600 px-7 py-3 text-sm font-semibold text-white hover:bg-primary-700 transition"
+                  class="btn btn-primary mt-6"
                 >
                   {{ slide.button_text }}
                 </router-link>
@@ -36,17 +36,17 @@
           v-for="(_, i) in slides"
           :key="i"
           @click="current = i"
-          :class="['h-2 rounded-full transition-all', current === i ? 'w-8 bg-white' : 'w-2 bg-white/50 hover:bg-white/75']"
+          :class="['h-1.5 transition-all', current === i ? 'w-[26px] bg-white' : 'w-1.5 bg-white/50 hover:bg-white/75']"
         ></button>
       </div>
     </div>
 
     <!-- Fallback if no slides -->
-    <div v-else class="h-[420px] sm:h-[500px] flex items-center justify-center bg-gradient-to-br from-primary-600 to-primary-800">
+    <div v-else class="h-[420px] sm:h-[500px] flex items-center justify-center bg-accent-700">
       <div class="text-center px-4">
-        <h2 class="text-3xl sm:text-5xl font-extrabold">Bienvenue sur O3 Store</h2>
-        <p class="mt-4 text-lg text-primary-100">Decouvrez nos meilleurs produits</p>
-        <router-link to="/shop" class="mt-6 inline-block rounded-xl bg-white px-7 py-3 text-sm font-semibold text-primary-700 hover:bg-gray-100 transition">
+        <h2 class="text-[44px] font-extrabold">Bienvenue sur O3 Store</h2>
+        <p class="mt-4 text-lg text-accent-100">Decouvrez nos meilleurs produits</p>
+        <router-link to="/shop" class="btn btn-primary mt-6 inline-flex">
           Voir la boutique
         </router-link>
       </div>

@@ -1,22 +1,144 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where(.dark, .dark *));
-
 @theme {
-  --font-sans: 'Inter', sans-serif;
+  --font-sans: 'Archivo', sans-serif;
   --container-9xl: 96rem;
-  --color-primary-50: #eff6ff;
-  --color-primary-100: #dbeafe;
-  --color-primary-200: #bfdbfe;
-  --color-primary-300: #93c5fd;
-  --color-primary-400: #60a5fa;
-  --color-primary-500: #3b82f6;
-  --color-primary-600: #2563eb;
-  --color-primary-700: #1d4ed8;
-  --color-primary-800: #1e40af;
-  --color-primary-900: #1e3a8a;
+
+  --color-bg: #f3f2f2;
+  --color-surface: #eae9e9;
+  --color-ink: #201e1d;
+  --color-divider: color-mix(in srgb, #201e1d 40%, transparent);
+
+  --color-accent-100: #fff2ef;
+  --color-accent-200: #ffe0d9;
+  --color-accent-300: #ffc4b8;
+  --color-accent-400: #ff9783;
+  --color-accent-500: #ec3013;
+  --color-accent-600: #dd2b0f;
+  --color-accent-700: #ae1800;
+  --color-accent-800: #7c1405;
+  --color-accent-900: #4d170e;
+
+  --color-neutral-100: #f8f4f4;
+  --color-neutral-200: #eae7e7;
+  --color-neutral-300: #d7d3d3;
+  --color-neutral-400: #bab6b6;
+  --color-neutral-500: #9b9797;
+  --color-neutral-600: #7d7979;
+  --color-neutral-700: #605d5d;
+  --color-neutral-800: #444141;
+  --color-neutral-900: #2d2b2b;
+
+  --radius-none: 0px;
 }
 
 body {
-  font-family: var(--font-sans);
+  font-family: 'Archivo', sans-serif;
+  background: var(--color-bg);
+  color: var(--color-ink);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Archivo', sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent-500);
+  outline-offset: 2px;
+}
+
+/* — component classes (Modernist design system) — */
+
+.hr {
+  height: 2px;
+  border: 0;
+  margin: 0;
+  background: var(--color-divider);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  font-family: 'Archivo', sans-serif;
+  font-weight: 800;
+  font-size: 14px;
+  line-height: 1.2;
+  color: var(--color-ink);
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 8px 14px;
+}
+.btn svg { display: block; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-primary { background: var(--color-accent-500); color: var(--color-bg); }
+.btn-primary:hover { background: var(--color-accent-600); }
+.btn-primary:active { background: var(--color-accent-700); }
+.btn-secondary { border-color: var(--color-divider); }
+.btn-secondary:hover { background: color-mix(in srgb, var(--color-ink) 7%, transparent); }
+.btn-secondary:active { background: color-mix(in srgb, var(--color-ink) 14%, transparent); }
+.btn-ghost { color: var(--color-accent-500); padding-inline: 4px; }
+.btn-ghost:hover { background: color-mix(in srgb, var(--color-accent-500) 10%, transparent); }
+.btn-ghost:active { background: color-mix(in srgb, var(--color-accent-500) 18%, transparent); }
+.btn-icon { width: 36px; height: 36px; padding: 0; justify-content: center; }
+.btn-block { width: 100%; justify-content: flex-start; text-align: left; }
+
+.field > label {
+  display: block;
+  font-size: 12px;
+  margin-bottom: 5px;
+  color: color-mix(in srgb, var(--color-ink) 70%, transparent);
+}
+.input {
+  width: 100%;
+  min-height: 36px;
+  padding: 6px 10px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--color-ink);
+  caret-color: var(--color-accent-500);
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+}
+.input:hover { border-color: color-mix(in srgb, var(--color-ink) 45%, transparent); }
+.input:focus-visible { border-color: var(--color-accent-500); outline-offset: 0; }
+.input:disabled { cursor: not-allowed; opacity: 0.6; }
+textarea.input { min-height: 90px; resize: vertical; }
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: var(--color-surface);
+}
+.card-kicker { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-accent-500); }
+.card-title { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 17px; line-height: 1.2; }
+.card-body { margin: 0; font-size: 13px; opacity: 0.8; flex: 1; }
+.card-meta { display: flex; align-items: center; gap: 6px; font-size: 11px; color: color-mix(in srgb, var(--color-ink) 50%, transparent); }
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  padding: 3px 10px;
+}
+.tag-accent { background: var(--color-accent-100); color: var(--color-accent-800); }
+.tag-neutral { background: var(--color-neutral-100); color: var(--color-neutral-800); }
+.tag-outline { border: 1px solid var(--color-accent-500); color: var(--color-accent-500); }
+
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: color-mix(in srgb, var(--color-neutral-900) 50%, transparent);
+}
+
+.grayscale {
+  filter: grayscale(1) contrast(1.08);
 }

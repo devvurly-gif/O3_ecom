@@ -1,5 +1,5 @@
 <template>
-  <div class="flex min-h-screen flex-col bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+  <div class="flex min-h-screen flex-col bg-bg text-ink">
     <Navbar />
     <main class="flex-1">
       <router-view v-slot="{ Component }">
@@ -25,8 +25,4 @@
 import Navbar from '@/components/layout/Navbar.vue'
 import Footer from '@/components/layout/Footer.vue'
 import CartDrawer from '@/components/cart/CartDrawer.vue'
-import { useThemeStore } from '@/stores/themeStore'
-
-// Initialize theme on app start
-useThemeStore()
 </script>
