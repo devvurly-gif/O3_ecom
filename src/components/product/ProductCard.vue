@@ -20,13 +20,13 @@
       </span>
     </div>
 
-    <div class="p-4 flex flex-col gap-1.5 flex-1">
+    <div class="p-5 flex flex-col gap-2 flex-1">
       <p v-if="product.category" class="text-[11px] font-extrabold uppercase tracking-wide text-accent-700">{{ product.category.name }}</p>
       <p class="text-sm font-bold leading-snug flex-1 line-clamp-2 text-ink">
         {{ product.title }}
       </p>
 
-      <div class="mt-1 flex items-center justify-between">
+      <div class="mt-3 flex items-center justify-between">
         <div class="flex items-baseline gap-2">
           <span class="text-base font-extrabold text-ink">{{ formatPrice(product.has_promo ? product.promo_price_ttc : product.price_ttc) }}</span>
           <span v-if="product.has_promo" class="text-xs text-neutral-500 line-through">{{ formatPrice(product.price_ttc) }}</span>
