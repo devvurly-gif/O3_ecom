@@ -3,7 +3,7 @@
     <img
       :src="imageUrl(item.image)"
       :alt="item.title"
-      class="grayscale h-20 w-20 object-cover bg-surface"
+      class="h-20 w-20 object-cover bg-surface"
     />
     <div class="flex-1 min-w-0">
       <router-link :to="`/product/${item.slug}`" class="text-sm font-medium text-ink hover:text-accent-500 line-clamp-1">

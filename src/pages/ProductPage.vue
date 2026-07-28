@@ -14,12 +14,12 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
         <!-- Images -->
         <div>
-          <div class="grayscale aspect-square bg-surface overflow-hidden cursor-zoom-in" @click="openLightbox(selectedImage)">
+          <div class="aspect-square bg-surface overflow-hidden cursor-zoom-in" @click="openLightbox(selectedImage)">
             <img :src="imageUrl(currentImage)" :alt="store.product.title" class="h-full w-full object-cover" />
           </div>
           <div v-if="images.length > 1" class="mt-4 grid grid-cols-5 gap-3">
             <button v-for="(img, i) in images" :key="i" @click="selectedImage = i"
-              :class="['grayscale aspect-square overflow-hidden border-2 transition', selectedImage === i ? 'border-accent-500' : 'border-transparent hover:border-neutral-400']">
+              :class="['aspect-square overflow-hidden border-2 transition', selectedImage === i ? 'border-accent-500' : 'border-transparent hover:border-neutral-400']">
               <img :src="imageUrl(img)" class="h-full w-full object-cover" />
             </button>
           </div>
@@ -111,7 +111,7 @@
             v-for="video in videos"
             :key="video.id"
             type="button"
-            class="grayscale group relative aspect-video overflow-hidden bg-neutral-900 text-left border border-divider"
+            class="group relative aspect-video overflow-hidden bg-neutral-900 text-left border border-divider"
             @click="openVideo(video)"
           >
             <img

@@ -1,7 +1,7 @@
 <template>
   <router-link :to="`/product/${product.slug}`" class="group flex flex-col h-full border border-divider bg-bg">
     <div class="relative">
-      <div class="grayscale aspect-square overflow-hidden bg-surface">
+      <div class="aspect-square overflow-hidden bg-surface">
         <img
           :src="imageUrl(product.image || product.images?.[0]?.url || product.images?.[0])"
           :alt="product.title"
