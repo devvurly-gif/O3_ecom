@@ -1,7 +1,7 @@
 <template>
-  <div class="mx-auto max-w-9xl px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+  <div class="mx-auto max-w-9xl px-4 sm:px-6 lg:px-2 py-2 sm:py-2">
     <!-- Header -->
-    <div class="flex p-4">
+    <div class="flex p-2">
       <h1 class="text-2xl sm:text-3xl text-ink flex-1">Boutique</h1>
       <p v-if="store.pagination.total" class="text-lg text-neutral-600 pt-4">{{ store.pagination.total }} produits</p>
     </div>
