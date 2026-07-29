@@ -52,7 +52,7 @@ const router = createRouter({
 // Inject a thin progress bar at the top of the page during route transitions.
 const bar = document.createElement('div')
 bar.id = 'route-progress'
-bar.style.cssText = 'position:fixed;top:0;left:0;height:3px;background:#2563eb;z-index:9999;transition:width .3s ease;width:0;pointer-events:none;'
+bar.style.cssText = 'position:fixed;top:0;left:0;height:2px;background:#ec3013;z-index:9999;transition:width .3s ease;width:0;pointer-events:none;'
 document.body.prepend(bar)
 
 router.beforeEach(() => {
