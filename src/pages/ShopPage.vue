@@ -7,7 +7,7 @@
     </div>
     <hr class="hr mb-10" />
 
-    <div class="flex flex-col lg:flex-row gap-10">
+    <div class="flex flex-col lg:flex-row gap-10" style="padding-top: 0.5rem;">
       <!-- Sidebar filters -->
       <div class="w-full lg:w-64 shrink-0">
         <ProductFilters
