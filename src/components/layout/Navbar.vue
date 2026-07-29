@@ -3,7 +3,7 @@
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="flex flex-wrap items-center gap-x-6 gap-y-2 py-3">
         <!-- Logo -->
-        <router-link to="/" class="flex items-center gap-2 mr-2">
+        <router-link to="/" class="flex-1 flex items-center gap-2 mr-2">
           <img v-if="shop.logo" :src="logoUrl" :alt="shopName" class="h-[34px] w-[34px] object-cover" />
           <div v-else class="flex h-[34px] w-[34px] items-center justify-center bg-accent-500 text-bg font-extrabold text-sm">
             O3
