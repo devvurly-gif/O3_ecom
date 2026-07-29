@@ -10,20 +10,21 @@
     <div v-else-if="!submitted" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
       <!-- Form -->
       <div class="lg:col-span-2">
-        <!-- Step 1: email-first lookup -->
+        <!-- Step 1: email-or-phone lookup -->
         <div v-if="step === 'email'" class="card border border-divider space-y-5">
-          <h2 class="card-title">Votre email</h2>
-          <p class="text-sm text-neutral-600">Entrez votre email pour continuer. Si vous avez déjà commandé chez nous, vos informations seront pré-remplies.</p>
+          <h2 class="card-title">Identifiez-vous</h2>
+          <p class="text-sm text-neutral-600">Entrez votre email ou votre numéro de téléphone pour continuer. Si vous avez déjà commandé chez nous, vos informations seront pré-remplies.</p>
 
-          <form @submit.prevent="checkEmail">
+          <form @submit.prevent="checkIdentifier">
             <div class="field">
-              <label>Email</label>
+              <label>Email ou téléphone</label>
               <input
-                v-model="form.email"
-                type="email"
+                v-model="identifier"
+                type="text"
                 required
                 autofocus
                 class="input"
+                placeholder="vous@exemple.com ou 06 12 34 56 78"
               />
             </div>
 
@@ -39,9 +40,9 @@
             </button>
           </form>
 
-          <!-- Shown once we know this email isn't registered yet -->
+          <!-- Shown once we know this email/phone isn't registered yet -->
           <div v-if="notRegistered" style="background: var(--color-accent-100); border: 1px solid var(--color-accent-300); color: var(--color-accent-800)" class="p-4">
-            <p class="text-sm mb-3">Cet email n'est pas encore enregistré.</p>
+            <p class="text-sm mb-3">Cet email ou téléphone n'est pas encore enregistré.</p>
             <button
               type="button"
               class="btn btn-secondary btn-block"
@@ -58,7 +59,7 @@
             <div class="flex items-center justify-between">
               <h2 class="card-title">Informations de livraison</h2>
               <button type="button" class="text-xs font-bold text-accent-500 hover:underline" @click="backToEmail">
-                Modifier l'email
+                Modifier
               </button>
             </div>
 
@@ -68,7 +69,7 @@
 
             <div class="field">
               <label>Email</label>
-              <input :value="form.email" type="email" disabled class="input" />
+              <input v-model="form.email" type="email" required :disabled="!!form.email" class="input" />
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -170,6 +171,7 @@ const orderReference = ref('')
 // delivery form, prefilled automatically when the email matches an
 // existing customer of this tenant).
 const step = ref('email')
+const identifier = ref('')
 const lookupLoading = ref(false)
 const lookupError = ref('')
 const notRegistered = ref(false)
@@ -184,26 +186,39 @@ const form = reactive({
   notes: '',
 })
 
-async function checkEmail() {
+function isEmailLike(value) {
+  return /\S+@\S+\.\S+/.test(value)
+}
+
+async function checkIdentifier() {
   lookupError.value = ''
   notRegistered.value = false
   lookupLoading.value = true
 
+  const value = identifier.value.trim()
+  const params = isEmailLike(value) ? { email: value } : { phone: value }
+
   try {
-    const res = await api.get('/customers/lookup', { params: { email: form.email } })
+    const res = await api.get('/customers/lookup', { params })
     if (res.data.exists) {
       form.name = res.data.customer.name || ''
       form.phone = res.data.customer.phone || ''
+      form.email = res.data.customer.email || ''
       form.address = res.data.customer.address || ''
       form.city = res.data.customer.city || ''
       isReturning.value = true
       step.value = 'form'
     } else {
+      // Prefill whichever field they typed so they don't have to retype it
+      if (params.email) form.email = value
+      if (params.phone) form.phone = value
       notRegistered.value = true
     }
   } catch (e) {
     // Lookup is a convenience, not a gate — if it fails, let the
     // customer proceed as a new customer rather than blocking checkout.
+    if (params.email) form.email = value
+    if (params.phone) form.phone = value
     notRegistered.value = true
   } finally {
     lookupLoading.value = false
@@ -220,8 +235,10 @@ function backToEmail() {
   step.value = 'email'
   notRegistered.value = false
   isReturning.value = false
+  identifier.value = ''
   form.name = ''
   form.phone = ''
+  form.email = ''
   form.address = ''
   form.city = ''
 }
