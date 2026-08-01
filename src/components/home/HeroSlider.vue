@@ -44,10 +44,10 @@
     <!-- Fallback if no slides -->
     <div v-else class="h-[420px] sm:h-[500px] flex items-center justify-center bg-accent-700">
       <div class="text-center px-4">
-        <h2 class="text-[44px] font-extrabold">Bienvenue sur O3 Store</h2>
-        <p class="mt-4 text-lg text-accent-100">Découvrez nos meilleurs produits</p>
+        <h2 class="text-[44px] font-extrabold">{{ content.hero.fallbackTitle(shopName) }}</h2>
+        <p class="mt-4 text-lg text-accent-100">{{ content.hero.fallbackSubtitle }}</p>
         <router-link to="/shop" class="btn btn-primary mt-6 inline-flex">
-          Voir la boutique
+          {{ content.hero.fallbackCta }}
         </router-link>
       </div>
     </div>
@@ -55,11 +55,16 @@
 </template>
 
 <script setup>
-import { ref, watch, onUnmounted } from 'vue'
+import { ref, computed, inject, watch, onUnmounted } from 'vue'
 import { useImageUrl } from '@/composables/useImageUrl'
+import { content } from '@/config/content'
 
 const props = defineProps({ slides: { type: Array, default: () => [] } })
 const { imageUrl } = useImageUrl()
+
+// Même source que Navbar/Footer : le nom de l'enseigne vient de /api/ecom/config.
+const config = inject('shopConfig', {})
+const shopName = computed(() => config?.shop?.name || 'notre boutique')
 
 const current = ref(0)
 let timer = null

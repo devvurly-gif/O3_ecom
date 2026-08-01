@@ -8,8 +8,8 @@
     <!-- 2. Nouveautés -->
     <NewArrivals
       v-if="newProducts.length"
-      title="Nouveautés"
-      subtitle="Les derniers produits ajoutés"
+      :title="content.home.newArrivals.title"
+      :subtitle="content.home.newArrivals.subtitle"
       :products="newProducts"
       :link="{ name: 'shop', query: { sort: 'newest' } }"
     />
@@ -23,8 +23,8 @@
 
     <FeaturedProducts
       v-if="promoProducts.length"
-      title="Offres spéciales"
-      subtitle="Produits en promotion"
+      :title="content.home.promoProducts.title"
+      :subtitle="content.home.promoProducts.subtitle"
       :products="promoProducts"
       link="/promotions"
     />
@@ -49,6 +49,7 @@ import FeaturedProducts from '@/components/home/FeaturedProducts.vue'
 import PromoSection from '@/components/home/PromoSection.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
 import { markAppReady } from '@/composables/useAppReady'
+import { content } from '@/config/content'
 
 const categoryStore = useCategoryStore()
 const promoStore = usePromoStore()

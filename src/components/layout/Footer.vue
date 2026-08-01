@@ -9,7 +9,7 @@
             <div v-else class="flex h-[34px] w-[34px] items-center justify-center bg-accent-500 text-bg font-extrabold text-sm">O3</div>
             <span class="text-lg font-extrabold text-ink">{{ shopName }}</span>
           </div>
-          <p class="text-sm leading-relaxed text-neutral-700">Votre boutique en ligne pour les meilleurs produits au Maroc.</p>
+          <p class="text-sm leading-relaxed text-neutral-700">{{ content.footer.tagline }}</p>
         </div>
 
         <!-- Links -->
@@ -53,6 +53,7 @@
 import { inject, computed } from 'vue'
 import { useImageUrl } from '@/composables/useImageUrl'
 import { EnvelopeIcon, PhoneIcon, MapPinIcon } from '@heroicons/vue/24/outline'
+import { content } from '@/config/content'
 
 const config = inject('shopConfig', {})
 const { imageUrl } = useImageUrl()

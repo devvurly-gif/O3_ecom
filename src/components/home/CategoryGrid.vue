@@ -2,8 +2,8 @@
   <section class="py-16 bg-surface">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-10">
-        <h2 class="text-2xl sm:text-3xl text-ink">Nos Catégories</h2>
-        <p class="mt-2 text-neutral-600">Explorez nos différentes catégories de produits</p>
+        <h2 class="text-2xl sm:text-3xl text-ink">{{ content.home.categories.title }}</h2>
+        <p class="mt-2 text-neutral-600">{{ content.home.categories.subtitle }}</p>
       </div>
       <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
         <router-link
@@ -25,6 +25,7 @@
 
 <script setup>
 import { TagIcon } from '@heroicons/vue/24/outline'
+import { content } from '@/config/content'
 
 defineProps({ categories: { type: Array, default: () => [] } })
 </script>

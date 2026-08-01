@@ -7,7 +7,7 @@
           <p v-if="subtitle" class="mt-1 text-neutral-600">{{ subtitle }}</p>
         </div>
         <router-link :to="link" class="btn-ghost font-extrabold text-sm inline-flex items-center gap-1">
-          Voir tout
+          {{ content.common.seeAll }}
           <ArrowRightIcon class="h-4 w-4" />
         </router-link>
       </div>
@@ -19,6 +19,7 @@
 <script setup>
 import ProductGrid from '@/components/product/ProductGrid.vue'
 import { ArrowRightIcon } from '@heroicons/vue/24/outline'
+import { content } from '@/config/content'
 
 defineProps({
   title: { type: String, required: true },
