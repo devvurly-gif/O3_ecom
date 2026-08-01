@@ -48,6 +48,7 @@ import NewArrivals from '@/components/home/NewArrivals.vue'
 import FeaturedProducts from '@/components/home/FeaturedProducts.vue'
 import PromoSection from '@/components/home/PromoSection.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
+import { markAppReady } from '@/composables/useAppReady'
 
 const categoryStore = useCategoryStore()
 const promoStore = usePromoStore()
@@ -72,6 +73,7 @@ onMounted(async () => {
     console.error('Failed to load home data:', e)
   } finally {
     loading.value = false
+    markAppReady()
   }
 })
 </script>

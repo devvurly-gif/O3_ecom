@@ -29,12 +29,19 @@
       @keyframes boot-spin {
         to { transform: rotate(360deg); }
       }
+      #boot-loader.is-hidden {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.25s ease;
+      }
     </style>
   </head>
   <body class="antialiased">
-    <div id="app">
-      <div id="boot-loader" aria-hidden="true"><div class="spinner"></div></div>
-    </div>
+    <div id="app"></div>
+    <!-- Lives outside #app so Vue's mount (which replaces #app's content)
+         doesn't wipe it out — it's removed explicitly once the initial
+         page has finished fetching its data, see useAppReady.js. -->
+    <div id="boot-loader" aria-hidden="true"><div class="spinner"></div></div>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
