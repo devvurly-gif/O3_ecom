@@ -140,13 +140,13 @@
       <div class="mx-auto flex h-16 w-16 items-center justify-center bg-accent-500">
         <CheckIcon class="h-8 w-8 text-bg" />
       </div>
-      <h2 class="mt-6 text-2xl text-ink">Commande envoyee !</h2>
-      <p class="mt-2 text-neutral-600">Merci pour votre commande. Votre devis a ete cree avec succes.</p>
+      <h2 class="mt-6 text-2xl text-ink">Commande envoyée !</h2>
+      <p class="mt-2 text-neutral-600">Merci pour votre commande. Votre devis a été créé avec succès.</p>
       <p v-if="orderReference" class="mt-3 text-lg font-extrabold text-accent-800">
         Reference : {{ orderReference }}
       </p>
       <router-link to="/" class="btn btn-primary mt-6 inline-flex">
-        Retour a l'accueil
+        Retour à l'accueil
       </router-link>
     </div>
   </div>
@@ -277,7 +277,7 @@ async function submitOrder() {
       const firstError = Object.values(e.response.data.errors)[0]
       error.value = Array.isArray(firstError) ? firstError[0] : firstError
     } else {
-      error.value = 'Une erreur est survenue. Veuillez reessayer.'
+      error.value = 'Une erreur est survenue. Veuillez réessayer.'
     }
   } finally {
     loading.value = false

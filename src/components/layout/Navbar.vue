@@ -34,7 +34,7 @@
                   Tous les produits
                 </router-link>
                 <div v-if="categoryStore.categories.length" class="border-t border-[color:var(--color-divider)] mt-1 pt-1">
-                  <p class="px-4 py-1.5 text-xs font-semibold text-neutral-500 uppercase tracking-wide">Categories</p>
+                  <p class="px-4 py-1.5 text-xs font-semibold text-neutral-500 uppercase tracking-wide">Catégories</p>
                   <router-link
                     v-for="cat in categoryStore.categories"
                     :key="cat.id"

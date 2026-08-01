@@ -45,7 +45,7 @@
     <div v-else class="h-[420px] sm:h-[500px] flex items-center justify-center bg-accent-700">
       <div class="text-center px-4">
         <h2 class="text-[44px] font-extrabold">Bienvenue sur O3 Store</h2>
-        <p class="mt-4 text-lg text-accent-100">Decouvrez nos meilleurs produits</p>
+        <p class="mt-4 text-lg text-accent-100">Découvrez nos meilleurs produits</p>
         <router-link to="/shop" class="btn btn-primary mt-6 inline-flex">
           Voir la boutique
         </router-link>

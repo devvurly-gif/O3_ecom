@@ -41,7 +41,7 @@
       <!-- Summary -->
       <div class="lg:col-span-1">
         <div class="sticky top-24 card border border-divider">
-          <h2 class="card-title mb-2">Resume de la commande</h2>
+          <h2 class="card-title mb-2">Résumé de la commande</h2>
           <div class="space-y-3 text-sm">
             <div class="flex justify-between text-neutral-600">
               <span>Sous-total ({{ cart.totalItems }} articles)</span>

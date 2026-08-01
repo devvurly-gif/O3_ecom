@@ -32,8 +32,8 @@
           <ProductGrid v-if="store.products.length" :products="store.products" />
           <div v-else class="flex flex-col items-center justify-center py-20 text-center">
             <MagnifyingGlassIcon class="h-12 w-12 text-neutral-400" />
-            <p class="mt-4 text-neutral-600">Aucun produit trouve</p>
-            <button @click="resetFilters" class="btn-ghost mt-4 font-bold text-sm">Reinitialiser les filtres</button>
+            <p class="mt-4 text-neutral-600">Aucun produit trouvé</p>
+            <button @click="resetFilters" class="btn-ghost mt-4 font-bold text-sm">Réinitialiser les filtres</button>
           </div>
           <Pagination
             :current-page="store.pagination.currentPage"

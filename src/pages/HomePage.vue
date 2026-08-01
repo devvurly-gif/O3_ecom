@@ -5,11 +5,11 @@
 
     <hr class="hr" />
 
-    <!-- 2. Nouveautes -->
+    <!-- 2. Nouveautés -->
     <NewArrivals
       v-if="newProducts.length"
-      title="Nouveautes"
-      subtitle="Les derniers produits ajoutes"
+      title="Nouveautés"
+      subtitle="Les derniers produits ajoutés"
       :products="newProducts"
       :link="{ name: 'shop', query: { sort: 'newest' } }"
     />
@@ -23,7 +23,7 @@
 
     <FeaturedProducts
       v-if="promoProducts.length"
-      title="Offres speciales"
+      title="Offres spéciales"
       subtitle="Produits en promotion"
       :products="promoProducts"
       link="/promotions"

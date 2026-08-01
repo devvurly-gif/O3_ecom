@@ -55,7 +55,7 @@
                       ? 'btn-secondary'
                       : 'btn-secondary opacity-45 line-through cursor-not-allowed'
                 ]">
-                {{ v.label }}<span v-if="!v.in_stock" class="ml-1 text-xs">(epuise)</span>
+                {{ v.label }}<span v-if="!v.in_stock" class="ml-1 text-xs">(épuisé)</span>
               </button>
             </div>
             <p v-if="selectedVariant" class="mt-2 text-xs text-neutral-500">Stock : {{ selectedVariant.stock_available }} pcs</p>
@@ -156,7 +156,7 @@
 
     <div v-else-if="!store.loading" class="py-20 text-center">
       <p class="text-lg font-bold text-ink">Produit introuvable</p>
-      <router-link to="/shop" class="btn btn-primary mt-6 inline-flex">Retour a la boutique</router-link>
+      <router-link to="/shop" class="btn btn-primary mt-6 inline-flex">Retour à la boutique</router-link>
     </div>
 
     <!-- Lightbox -->

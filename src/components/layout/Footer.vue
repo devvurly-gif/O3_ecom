@@ -43,7 +43,7 @@
       </div>
 
       <div class="mt-10 border-t border-divider pt-6 text-center text-xs text-neutral-600">
-        &copy; {{ new Date().getFullYear() }} {{ shopName }}. Tous droits r&eacute;serv&eacute;s.
+        &copy; {{ new Date().getFullYear() }} {{ shopName }}. Tous droits réservés.
       </div>
     </div>
   </footer>
