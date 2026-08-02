@@ -159,6 +159,52 @@ supprimées (`Chaîne De Scie 18"  Packed by double blister` → `Chaîne de sci
 
 ---
 
+## T3b — Descriptions techniques (appliqué le 2026-08-02)
+
+Les titres traduits, les **descriptions restaient en anglais** et étaient visibles
+sur chaque fiche produit (`18" Saw chain Packed by double blister`). 157 des 177
+descriptions renseignées contenaient de l'anglais.
+
+### Méthode : glossaire déterministe, pas de traduction au fil de l'eau
+
+Les descriptions sont des fiches techniques semi-structurées
+(`Libellé:valeur, Libellé:valeur`). Le vocabulaire a donc été extrait
+mécaniquement — 185 libellés et 125 expressions distincts — puis traduit une
+fois pour toutes dans un glossaire appliqué du terme le plus long au plus court
+(« Max. cutting diameter » doit gagner contre « Max »).
+
+Conséquences voulues :
+
+- les nombres, unités et références produit ne sont jamais touchés ;
+- le même terme anglais donne toujours la même traduction française ;
+- l'opération est rejouable, et un résidu non couvert se voit dans le rapport
+  plutôt que de passer inaperçu.
+
+### Résultat
+
+| Champ | Traduits |
+|-------|----------|
+| `p_description` | 155 / 177 |
+| `p_long_description` | 19 / 21 |
+
+**192 champs mis à jour** en trois passes, aucun ignoré, aucun slug modifié.
+Les champs non traduits étaient déjà en français.
+
+Balayage final sur les données réellement en base : plus aucun mot anglais.
+Les occurrences restantes (`type`, `carton`, `laser`, `centre`, `blister`,
+`aluminium`, `bar`…) sont des mots français.
+
+`p_long_description` est rendu via `v-html` : les remplacements ne s'appliquent
+qu'au texte situé entre les balises, jamais à l'intérieur de celles-ci.
+
+> À noter : la fiche produit affiche `long_description` en priorité et retombe
+> sur `description`. Les deux champs ont été traités, mais quelques produits
+> gardent des formulations légèrement différentes entre les deux (par exemple
+> « Courant max. » d'un côté, « Courant maximal » de l'autre) — écart présent
+> avant l'opération, sans effet visible.
+
+---
+
 ## Reste à arbitrer par le métier
 
 | Sujet | Détail |
@@ -166,3 +212,4 @@ supprimées (`Chaîne De Scie 18"  Packed by double blister` → `Chaîne de sci
 | Titres non renseignés | ids **169** (`JDLM1B283`, 1 250 MAD) et **171** (`JDLWP5521`, 760 MAD) — aucune description pour deviner le produit. Visibles en ligne tels quels. |
 | Titre mixte restant | id **66** `Brad cloueuse 2 en 1 combo 100 pcs Ga 18` — formulation trop incertaine pour être réécrite sans avis. |
 | Doublon de formulation | ids **151** `Cloueur à finition sans fil` et **152** `Cloueur de finition sans fil` — deux SKU distincts (`JDBJ1308` / `JDBJ2308`), libellés quasi identiques. L'usage correct est « de finition ». |
+| Termes techniques à confirmer | `Hélicoptère à béton thermique` (power trowel), `Vibreur à béton thermique` (concrete vibrator), `Vibreur à carrelage sans fil` (tile vibration machine) — retenus faute de terme unique établi. |

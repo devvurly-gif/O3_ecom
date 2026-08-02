@@ -58,3 +58,12 @@ champ parallèle les aurait laissés en anglais.
 
 121 produits renommés, aucun slug modifié. Détail complet, justification du choix
 et reliquats : [T3-TRADUCTIONS-PRODUITS.md](T3-TRADUCTIONS-PRODUITS.md).
+
+## T3b — Descriptions techniques (corrigé le 2026-08-02)
+
+Les titres traduits, les descriptions restaient en anglais et s'affichaient sur
+chaque fiche. Traduites via un glossaire déterministe construit à partir du
+vocabulaire réellement présent (185 libellés, 125 expressions) plutôt qu'au fil
+de l'eau : les nombres et unités ne bougent pas, et un même terme anglais donne
+toujours la même traduction. **192 champs mis à jour**, plus aucun mot anglais
+au balayage final.
