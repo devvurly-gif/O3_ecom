@@ -49,9 +49,12 @@ une donnée modifiée entre-temps est signalée, jamais écrasée.
 - **Catégorie 1 « Non catégorisé »** sert de fourre-tout par défaut (créée
   automatiquement à la création du tenant, cf. `TenantController`).
 
-## Noms de produits en anglais (à traiter en T3)
+## T3 — Noms de produits en anglais (corrigé le 2026-08-02)
 
-Relevé partiel : `Gasoline engine`, `Silent diesel generator`, `Electrode holder`,
-`Welding ground clamp`, `Water pump`, `Sewage submersible pump`, `Gasoline tiller`,
-`Diesel tiller`, `Gasoline generator`, `Battery load tester`, `Auto air compressor`.
-Inventaire complet et stratégie de traduction : voir T3.
+96 produits publiés sur 163 portaient un nom anglais. Les titres ont été traduits
+directement dans `p_title` plutôt que via un champ `p_title_fr` : la recherche, le
+tri « Nom A-Z » et l'ERP (devis, factures, POS) portent tous sur ce champ, un
+champ parallèle les aurait laissés en anglais.
+
+121 produits renommés, aucun slug modifié. Détail complet, justification du choix
+et reliquats : [T3-TRADUCTIONS-PRODUITS.md](T3-TRADUCTIONS-PRODUITS.md).
