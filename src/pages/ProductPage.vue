@@ -31,10 +31,20 @@
           <h1 class="text-2xl sm:text-3xl text-ink">{{ store.product.title }}</h1>
 
           <!-- Price -->
-          <div class="mt-4 flex items-baseline gap-3">
-            <span class="text-[28px] font-extrabold text-ink">{{ formatPrice(effectivePrice) }}</span>
+          <div v-if="prixConnu" class="mt-4 flex items-baseline gap-3">
+            <span class="text-[28px] font-extrabold text-ink">{{ formatPrice(prixApplique) }}</span>
             <span v-if="store.product.has_promo && !selectedVariant" class="text-lg text-neutral-500 line-through">{{ formatPrice(store.product.price_ttc) }}</span>
             <span v-if="store.product.has_promo && !selectedVariant" class="tag tag-accent">-{{ store.product.discount_percent }}%</span>
+          </div>
+
+          <!-- Prix non saisi dans l'ERP : on propose le contact plutôt qu'un
+               « 0,00 MAD » trompeur et un panier qu'on ne saurait pas facturer. -->
+          <div v-else class="mt-4 border border-divider bg-surface p-4">
+            <p class="text-[22px] font-extrabold text-ink">{{ content.price.onRequest }}</p>
+            <p class="mt-1 text-sm text-neutral-600">{{ content.price.cardHint }}</p>
+            <a v-if="lienContact" :href="lienContact" class="btn btn-primary mt-3 inline-flex">
+              {{ content.price.contactCta }}
+            </a>
           </div>
 
           <!-- Variant selector -->
@@ -212,9 +222,10 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, inject, onMounted, onUnmounted, watch } from 'vue'
 import { useProductStore } from '@/stores/productStore'
 import { useCartStore } from '@/stores/cartStore'
+import { content } from '@/config/content'
 import { useFormatPrice } from '@/composables/useFormatPrice'
 import { useImageUrl } from '@/composables/useImageUrl'
 import { useFileUrl } from '@/composables/useFileUrl'
@@ -228,7 +239,8 @@ const props = defineProps({ slug: { type: String, required: true } })
 
 const store = useProductStore()
 const cart = useCartStore()
-const { formatPrice } = useFormatPrice()
+const { formatPrice, effectivePrice, isPurchasable } = useFormatPrice()
+const shopConfig = inject('shopConfig', {})
 const { imageUrl } = useImageUrl()
 const { fileUrl, fileSize } = useFileUrl()
 const { embedUrl, thumbnailUrl } = useVideoEmbed()
@@ -253,10 +265,16 @@ const videos = computed(() => store.product?.videos ?? [])
 const documents = computed(() => store.product?.documents ?? [])
 const activeVideoEmbedUrl = computed(() => activeVideo.value ? embedUrl(activeVideo.value.url) : null)
 
-const effectivePrice = computed(() => {
-  if (selectedVariant.value) return selectedVariant.value.price_ttc
-  if (!store.product) return 0
-  return store.product.has_promo ? store.product.promo_price_ttc : store.product.price_ttc
+const prixApplique = computed(() => effectivePrice(store.product, selectedVariant.value))
+const prixConnu = computed(() => isPurchasable(store.product, selectedVariant.value))
+
+// Repli sur l'e-mail si la boutique n'a pas de téléphone renseigné ; si elle n'a
+// ni l'un ni l'autre, on n'affiche pas de bouton mort.
+const lienContact = computed(() => {
+  const shop = shopConfig?.shop ?? {}
+  if (shop.phone) return `tel:${String(shop.phone).replace(/\s+/g, '')}`
+  if (shop.email) return `mailto:${shop.email}`
+  return null
 })
 
 const currentInStock = computed(() => {
@@ -271,12 +289,14 @@ const currentSku = computed(() => {
 })
 
 const canAddToCart = computed(() => {
+  if (!prixConnu.value) return false
   if (!currentInStock.value) return false
   if (store.product && store.product.has_variants && !selectedVariant.value) return false
   return true
 })
 
 const addToCartLabel = computed(() => {
+  if (!prixConnu.value) return content.price.cartBlocked
   if (!currentInStock.value) return 'Indisponible'
   if (store.product && store.product.has_variants && !selectedVariant.value) return 'Choisir une variante'
   return 'Ajouter au panier'

@@ -26,15 +26,28 @@
         {{ product.title }}
       </p>
 
-      <div class="mt-3 flex items-center justify-between">
-        <div class="flex items-baseline gap-2">
-          <span class="text-base font-extrabold text-ink">{{ formatPrice(product.has_promo ? product.promo_price_ttc : product.price_ttc) }}</span>
+      <div class="mt-3 flex items-center justify-between gap-2">
+        <div v-if="achetable" class="flex items-baseline gap-2">
+          <span class="text-base font-extrabold text-ink">{{ formatPrice(effectivePrice(product)) }}</span>
           <span v-if="product.has_promo" class="text-xs text-neutral-500 line-through">{{ formatPrice(product.price_ttc) }}</span>
         </div>
+        <!-- Prix non saisi dans l'ERP : afficher « 0,00 MAD » serait faux. -->
+        <span v-else class="text-sm font-bold text-accent-700">{{ content.price.onRequest }}</span>
+
         <button
+          v-if="achetable"
           @click.prevent="cart.addItem(product)"
-          class="btn btn-icon btn-primary"
+          class="btn btn-icon btn-primary shrink-0"
           title="Ajouter au panier"
+        >
+          <PlusIcon class="h-4 w-4" />
+        </button>
+        <button
+          v-else
+          type="button"
+          disabled
+          class="btn btn-icon btn-secondary shrink-0 opacity-45 cursor-not-allowed"
+          :title="content.price.cardHint"
         >
           <PlusIcon class="h-4 w-4" />
         </button>
@@ -44,13 +57,17 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { useCartStore } from '@/stores/cartStore'
 import { useFormatPrice } from '@/composables/useFormatPrice'
 import { useImageUrl } from '@/composables/useImageUrl'
+import { content } from '@/config/content'
 import { PlusIcon } from '@heroicons/vue/24/solid'
 
-defineProps({ product: { type: Object, required: true } })
+const props = defineProps({ product: { type: Object, required: true } })
 const cart = useCartStore()
-const { formatPrice } = useFormatPrice()
+const { formatPrice, effectivePrice, isPurchasable } = useFormatPrice()
 const { imageUrl } = useImageUrl()
+
+const achetable = computed(() => isPurchasable(props.product))
 </script>

@@ -1,11 +1,16 @@
 import { defineStore } from 'pinia'
 import { ref, computed, watch } from 'vue'
+import { hasPrice, isPurchasable } from '@/composables/useFormatPrice'
 
 const STORAGE_KEY = 'o3_cart'
 
 function loadCart() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [] }
-  catch { return [] }
+  try {
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY)) || []
+    // Un panier enregistré avant l'ajout du garde-fou peut contenir un article
+    // sans prix : il fausserait le total d'un client qui revient.
+    return stored.filter((i) => hasPrice(i.variant_price ?? (i.has_promo ? i.promo_price_ttc : i.price_ttc)))
+  } catch { return [] }
 }
 
 export const useCartStore = defineStore('cart', () => {
@@ -34,6 +39,11 @@ export const useCartStore = defineStore('cart', () => {
   }
 
   function addItem(product, qty = 1, variant = null) {
+    // Garde-fou, pas seulement de l'UI désactivée : un produit sans prix saisi
+    // ne doit jamais entrer dans le panier, sinon la commande part avec un
+    // total faux. Renvoie false pour que l'appelant puisse réagir.
+    if (!isPurchasable(product, variant)) return false
+
     const key = cartKey(product.id, variant?.id ?? null)
     const existing = items.value.find(i => i._key === key)
 
@@ -61,6 +71,7 @@ export const useCartStore = defineStore('cart', () => {
       })
     }
     drawerOpen.value = true
+    return true
   }
 
   function updateQuantity(key, qty) {

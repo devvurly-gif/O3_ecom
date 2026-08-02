@@ -15,6 +15,14 @@ export const content = {
     seeAll: 'Voir tout',
   },
 
+  /** Produits dont le prix n'est pas encore saisi dans l'ERP. */
+  price: {
+    onRequest: 'Prix sur demande',
+    contactCta: 'Nous consulter',
+    cartBlocked: 'Prix sur demande',
+    cardHint: 'Contactez-nous pour un tarif',
+  },
+
   /** Affiché uniquement quand aucun slide n'est configuré dans l'ERP. */
   hero: {
     // Le nom réel de la boutique vient de /api/ecom/config : sur un tenant
