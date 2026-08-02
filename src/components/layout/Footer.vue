@@ -26,17 +26,17 @@
         <div>
           <h3 class="text-sm font-extrabold text-ink mb-4">Contact</h3>
           <ul class="space-y-2.5 text-sm">
-            <li v-if="shop.email" class="flex items-center gap-2">
+            <li v-if="email" class="flex items-center gap-2">
               <EnvelopeIcon class="h-[15px] w-[15px] text-neutral-600 flex-shrink-0" />
-              <a :href="`mailto:${shop.email}`" class="text-neutral-700 hover:text-accent-500 transition">{{ shop.email }}</a>
+              <a :href="`mailto:${email}`" class="text-neutral-700 hover:text-accent-500 transition">{{ email }}</a>
             </li>
-            <li v-if="shop.phone" class="flex items-center gap-2">
+            <li v-if="phone" class="flex items-center gap-2">
               <PhoneIcon class="h-[15px] w-[15px] text-neutral-600 flex-shrink-0" />
-              <a :href="`tel:${shop.phone}`" class="text-neutral-700 hover:text-accent-500 transition">{{ shop.phone }}</a>
+              <a :href="`tel:${String(phone).replace(/\s+/g, '')}`" class="text-neutral-700 hover:text-accent-500 transition">{{ phone }}</a>
             </li>
-            <li v-if="shop.address" class="flex items-center gap-2">
+            <li v-if="address" class="flex items-center gap-2">
               <MapPinIcon class="h-[15px] w-[15px] text-neutral-600 flex-shrink-0" />
-              <span class="text-neutral-700">{{ shop.address }}</span>
+              <span class="text-neutral-700">{{ address }}</span>
             </li>
           </ul>
         </div>
@@ -53,10 +53,13 @@
 import { inject, computed } from 'vue'
 import { useImageUrl } from '@/composables/useImageUrl'
 import { EnvelopeIcon, PhoneIcon, MapPinIcon } from '@heroicons/vue/24/outline'
+import { useShopContact } from '@/composables/useShopContact'
 import { content } from '@/config/content'
 
 const config = inject('shopConfig', {})
 const { imageUrl } = useImageUrl()
+
+const { phone, email, address } = useShopContact()
 
 const shop = computed(() => config?.shop ?? {})
 const shopName = computed(() => shop.value.name || 'O3 Store')

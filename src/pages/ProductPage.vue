@@ -222,11 +222,12 @@
 </template>
 
 <script setup>
-import { ref, computed, inject, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useProductStore } from '@/stores/productStore'
 import { useCartStore } from '@/stores/cartStore'
 import { content } from '@/config/content'
 import { useFormatPrice } from '@/composables/useFormatPrice'
+import { useShopContact } from '@/composables/useShopContact'
 import { useImageUrl } from '@/composables/useImageUrl'
 import { useFileUrl } from '@/composables/useFileUrl'
 import { useVideoEmbed } from '@/composables/useVideoEmbed'
@@ -240,7 +241,7 @@ const props = defineProps({ slug: { type: String, required: true } })
 const store = useProductStore()
 const cart = useCartStore()
 const { formatPrice, effectivePrice, isPurchasable } = useFormatPrice()
-const shopConfig = inject('shopConfig', {})
+const { demandeDePrix } = useShopContact()
 const { imageUrl } = useImageUrl()
 const { fileUrl, fileSize } = useFileUrl()
 const { embedUrl, thumbnailUrl } = useVideoEmbed()
@@ -268,14 +269,11 @@ const activeVideoEmbedUrl = computed(() => activeVideo.value ? embedUrl(activeVi
 const prixApplique = computed(() => effectivePrice(store.product, selectedVariant.value))
 const prixConnu = computed(() => isPurchasable(store.product, selectedVariant.value))
 
-// Repli sur l'e-mail si la boutique n'a pas de téléphone renseigné ; si elle n'a
-// ni l'un ni l'autre, on n'affiche pas de bouton mort.
-const lienContact = computed(() => {
-  const shop = shopConfig?.shop ?? {}
-  if (shop.phone) return `tel:${String(shop.phone).replace(/\s+/g, '')}`
-  if (shop.email) return `mailto:${shop.email}`
-  return null
-})
+// WhatsApp avec le nom du produit pré-rempli, sinon téléphone, sinon e-mail ;
+// null si la boutique n'a rien renseigné, pour ne pas afficher un bouton mort.
+const lienContact = computed(() =>
+  store.product ? demandeDePrix(store.product.title) : null
+)
 
 const currentInStock = computed(() => {
   if (store.product && store.product.has_variants) {
