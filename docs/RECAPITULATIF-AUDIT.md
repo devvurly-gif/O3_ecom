@@ -107,11 +107,11 @@ Ces points ne se corrigent pas dans le code. Ils sont chiffrés et listés.
 | Sujet | Volume | Détail |
 |-------|--------|--------|
 | **Produits sans prix** | **72 / 163 publiés** | [T5-PRIX-MANQUANTS.md](T5-PRIX-MANQUANTS.md) — liste par catégorie avec id et SKU |
-| **Produits non catégorisés** | **97** (81 publiés) | [T4-CATEGORISATION.md](T4-CATEGORISATION.md) — 24 rattachables sans arbitrage, 71 demandent 9 nouvelles catégories |
+| **Produits non catégorisés** | **73** (65 publiés) | [T4-CATEGORISATION.md](T4-CATEGORISATION.md) — les 24 rattachables sans arbitrage ont été traités ; les 71 restants demandent 9 nouvelles catégories |
 | **Titres non renseignés** | 2 | ids 169 (`JDLM1B283`) et 171 (`JDLWP5521`) — affichés `TITRE A COMPLETER` aux clients |
 | **Titre ambigu** | 1 | id 66 `Brad cloueuse 2 en 1 combo 100 pcs Ga 18` |
 | **Doublon de formulation** | 2 | ids 151/152, « Cloueur à finition » vs « de finition » |
-| **Slide hero de 646 Ko** | 1 | plus lourd que tout le bundle ; les autres slides sont en WebP à 75 Ko |
+| ~~Slide hero de 646 Ko~~ | — | **fait** : converti en WebP, 646 Ko → 148 Ko (−77 %) |
 | **Rattachements erronés** | 2 | « Disques diamant » ne contient qu'une clé à chocs ; « Échelles » contient un groupe électrogène |
 
 Les 72 produits sans prix et les 2 titres vides sont les plus urgents : ce sont
@@ -147,8 +147,7 @@ dans [T7-PERFORMANCE.md](T7-PERFORMANCE.md).
 
 ## Pistes techniques restantes, par gain
 
-1. **Slide hero à reconvertir en WebP** — ~570 Ko sur le chemin critique.
-2. **Remplacer axios par `fetch`** — 42 Ko gzip pour six GET JSON, c'est le
+1. **Remplacer axios par `fetch`** — 42 Ko gzip pour six GET JSON, c'est le
    plus gros morceau du bundle.
 3. **Variantes d'images côté ERP** — sans elles, `srcset` n'apporte rien. Le
    logo est servi en 246×205 pour un affichage 34×34.
@@ -156,3 +155,40 @@ dans [T7-PERFORMANCE.md](T7-PERFORMANCE.md).
    calculé par un accesseur, pas par une colonne.
 5. **Nettoyer les configurations Nginx** — trois blocs matchent `shop.*`, dont
    un mort et un fichier legacy qui provoque un avertissement au démarrage.
+
+---
+
+## Actions appliquées après le récapitulatif
+
+### Slide hero converti en WebP
+
+`slide-1785278797-6a69314d99fb5` : **646 Ko → 148 Ko**, soit 77 % de gain,
+dimensions 1920×1100 conservées. Converti avec Imagick (qualité 82, métadonnées
+retirées), enregistrement de la base repointé sur le `.webp`. Le `.jpg`
+d'origine est conservé sur le serveur, sans référence, en cas de retour arrière.
+
+C'était l'élément LCP et il pesait plus lourd que tout le bundle JS + CSS.
+
+### 24 produits rattachés (groupe A)
+
+Les rattachements ne demandant aucun arbitrage ont été appliqués :
+
+| Catégorie | Produits |
+|-----------|----------|
+| Pompes | 7 |
+| Source d'énergie | 5 |
+| Compresseurs à air | 5 |
+| Disques diamant | 5 |
+| Aspirateurs professionnels | 1 |
+| Échelles | 1 |
+
+Script apparié à l'état attendu : seuls les produits encore dans le fourre-tout
+ont été déplacés, 0 ignoré. **« Non catégorisé » passe de 97 à 73 produits**
+(65 publiés).
+
+Les compteurs de catégories visibles sur la boutique ne progressent pas du même
+nombre — ils ne comptent que les produits publiés, et une partie des produits
+rattachés ne l'est pas.
+
+**Reste le groupe B : 71 produits demandant la création de 9 catégories**, qui
+est une décision de marchandisage.
