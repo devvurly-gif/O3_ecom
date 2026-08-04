@@ -1,49 +1,36 @@
-import { createApp, watch } from 'vue'
+import { createApp, reactive } from 'vue'
 import { createPinia } from 'pinia'
 import router from './router'
 import App from './App.vue'
 import './assets/main.css'
 import api from './api/axios'
-import { appDataReady } from './composables/useAppReady'
 
 const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 
-// Fetch public ecom config (shop info: name/logo/phone/email/address)
-// from the tenant. The API key is NOT returned anymore (security audit
-// C3) — it's baked at build time via VITE_API_KEY in axios.js.
+/**
+ * Configuration boutique (nom, logo, coordonnées), servie par le tenant.
+ *
+ * Objet réactif fourni AVANT le montage puis rempli à l'arrivée de la réponse.
+ * L'application ne se montait auparavant qu'une fois /config résolu : sur le
+ * réseau réel cela retardait le premier rendu d'environ 1,5 s, et la page ne
+ * commençait à charger ses propres données qu'ensuite — d'où l'écran figé.
+ *
+ * Les consommateurs (Navbar, Footer, useShopContact) lisent déjà `config.shop`
+ * au travers d'un computed : ils se mettent à jour d'eux-mêmes.
+ *
+ * La clé d'API n'est pas renvoyée ici (audit sécurité C3) : elle est injectée
+ * au build via VITE_API_KEY, voir api/axios.js.
+ */
+const shopConfig = reactive({})
+app.provide('shopConfig', shopConfig)
+
+app.mount('#app')
+
 api.get('/config')
-  .then(({ data }) => {
-    // Make shop config available globally
-    app.provide('shopConfig', data)
-  })
+  .then(({ data }) => Object.assign(shopConfig, data))
   .catch(() => {
-    // Boot anyway; pages will surface their own errors.
+    // Une boutique dont la configuration ne répond pas reste navigable :
+    // les composants retombent sur leurs valeurs par défaut.
   })
-  .finally(() => {
-    app.mount('#app')
-  })
-
-// The boot loader lives outside #app (see index.html) so it survives
-// Vue's mount. Each entry page calls markAppReady() once its own initial
-// data fetch has settled — only then is it safe to reveal real content.
-function hideBootLoader() {
-  const el = document.getElementById('boot-loader')
-  if (!el) return
-  el.classList.add('is-hidden')
-  setTimeout(() => el.remove(), 300)
-}
-
-const stopWatch = watch(appDataReady, (ready) => {
-  if (ready) {
-    hideBootLoader()
-    stopWatch()
-  }
-})
-
-// Safety net: never leave the whole store stuck behind a spinner if a
-// page's fetch hangs or a future page forgets to call markAppReady().
-setTimeout(() => {
-  if (!appDataReady.value) hideBootLoader()
-}, 8000)

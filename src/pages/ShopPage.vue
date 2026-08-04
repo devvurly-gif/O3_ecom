@@ -27,7 +27,7 @@
 
       <!-- Products -->
       <div class="flex-1">
-        <LoadingSpinner v-if="store.loading" />
+        <ProductGridSkeleton v-if="store.loading" :count="12" />
         <template v-else>
           <ProductGrid v-if="store.products.length" :products="store.products" />
           <div v-else class="flex flex-col items-center justify-center py-20 text-center">
@@ -55,7 +55,7 @@ import { useBrandStore } from '@/stores/brandStore'
 import ProductGrid from '@/components/product/ProductGrid.vue'
 import ProductFilters from '@/components/product/ProductFilters.vue'
 import Pagination from '@/components/ui/Pagination.vue'
-import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
+import ProductGridSkeleton from '@/components/ui/ProductGridSkeleton.vue'
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
 
 const route = useRoute()

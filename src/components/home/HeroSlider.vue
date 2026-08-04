@@ -10,7 +10,19 @@
         leave-to-class="opacity-0"
       >
         <div v-for="(slide, i) in slides" :key="slide.id" v-show="current === i" class="absolute inset-0">
-          <img :src="imageUrl(slide.image)" :alt="slide.title" class="h-full w-full object-cover" />
+          <!-- Le premier slide est l'élément LCP : il doit être chargé tout de
+               suite et en priorité. Les suivants ne sont pas visibles au
+               chargement, ils peuvent attendre. -->
+          <img
+            :src="imageUrl(slide.image)"
+            :alt="slide.title"
+            width="1920"
+            height="800"
+            :loading="i === 0 ? 'eager' : 'lazy'"
+            :fetchpriority="i === 0 ? 'high' : 'auto'"
+            decoding="async"
+            class="h-full w-full object-cover"
+          />
           <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent"></div>
           <div class="absolute inset-0 flex items-center">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 w-full">

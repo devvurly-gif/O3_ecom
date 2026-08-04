@@ -5,7 +5,7 @@
         <!-- Brand -->
         <div>
           <div class="flex items-center gap-2 mb-4">
-            <img v-if="shop.logo" :src="logoUrl" :alt="shopName" class="h-[34px] w-[34px] object-cover" />
+            <img v-if="shop.logo" :src="logoUrl" :alt="shopName" width="34" height="34" loading="lazy" decoding="async" class="h-[34px] w-[34px] object-cover" />
             <div v-else class="flex h-[34px] w-[34px] items-center justify-center bg-accent-500 text-bg font-extrabold text-sm">O3</div>
             <span class="text-lg font-extrabold text-ink">{{ shopName }}</span>
           </div>

@@ -3,7 +3,7 @@
     <h1 class="text-2xl sm:text-3xl text-ink mb-2">Promotions</h1>
     <p class="text-neutral-600 mb-8">Profitez de nos meilleures offres</p>
 
-    <LoadingSpinner v-if="loading" />
+    <ProductGridSkeleton v-if="loading" :count="8" />
 
     <template v-else>
       <!-- Promo banners -->
@@ -46,7 +46,7 @@ import { ref, onMounted, watch } from 'vue'
 import api from '@/api/axios'
 import ProductGrid from '@/components/product/ProductGrid.vue'
 import Pagination from '@/components/ui/Pagination.vue'
-import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
+import ProductGridSkeleton from '@/components/ui/ProductGridSkeleton.vue'
 import { formatPrice } from '@/composables/useFormatPrice'
 
 const props = defineProps({ slug: { type: String, default: '' } })

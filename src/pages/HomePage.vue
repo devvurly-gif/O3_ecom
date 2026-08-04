@@ -1,13 +1,21 @@
 <template>
   <div>
-    <!-- 1. Hero Slider -->
-    <HeroSlider :slides="promoStore.slides" />
+    <!-- Chaque section affiche son propre squelette et se révèle dès que SES
+         données arrivent, sans attendre les autres : le hero n'est plus retenu
+         par la grille de catégories. -->
+
+    <!-- 1. Hero -->
+    <HeroSkeleton v-if="chargement.slides" />
+    <HeroSlider v-else :slides="promoStore.slides" />
 
     <hr class="hr" />
 
     <!-- 2. Nouveautés -->
+    <template v-if="chargement.nouveautes">
+      <SectionRailSkeleton />
+    </template>
     <NewArrivals
-      v-if="newProducts.length"
+      v-else-if="newProducts.length"
       :title="content.home.newArrivals.title"
       :subtitle="content.home.newArrivals.subtitle"
       :products="newProducts"
@@ -21,8 +29,11 @@
 
     <hr class="hr" />
 
+    <template v-if="chargement.promos">
+      <SectionRailSkeleton />
+    </template>
     <FeaturedProducts
-      v-if="promoProducts.length"
+      v-else-if="promoProducts.length"
       :title="content.home.promoProducts.title"
       :subtitle="content.home.promoProducts.subtitle"
       :products="promoProducts"
@@ -31,14 +42,13 @@
 
     <hr class="hr" />
 
-    <CategoryGrid :categories="categoryStore.categories" />
-
-    <LoadingSpinner v-if="loading" />
+    <CategoryGridSkeleton v-if="chargement.categories" />
+    <CategoryGrid v-else :categories="categoryStore.categories" />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { reactive, ref } from 'vue'
 import api from '@/api/axios'
 import { useCategoryStore } from '@/stores/categoryStore'
 import { usePromoStore } from '@/stores/promoStore'
@@ -47,8 +57,9 @@ import CategoryGrid from '@/components/home/CategoryGrid.vue'
 import NewArrivals from '@/components/home/NewArrivals.vue'
 import FeaturedProducts from '@/components/home/FeaturedProducts.vue'
 import PromoSection from '@/components/home/PromoSection.vue'
-import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
-import { markAppReady } from '@/composables/useAppReady'
+import HeroSkeleton from '@/components/ui/HeroSkeleton.vue'
+import SectionRailSkeleton from '@/components/ui/SectionRailSkeleton.vue'
+import CategoryGridSkeleton from '@/components/ui/CategoryGridSkeleton.vue'
 import { content } from '@/config/content'
 
 const categoryStore = useCategoryStore()
@@ -56,25 +67,33 @@ const promoStore = usePromoStore()
 
 const newProducts = ref([])
 const promoProducts = ref([])
-const loading = ref(true)
 
-onMounted(async () => {
-  try {
-    const [newRes, promoRes] = await Promise.all([
-      api.get('/products', { params: { new: true, per_page: 12 } }),
-      api.get('/products', { params: { promo: true, per_page: 8 } }),
-      categoryStore.fetchCategories(),
-      promoStore.fetchPromotions(),
-      promoStore.fetchSlides(),
-    ])
-    // Response may be paginated ({ data: [], current_page }) or unwrapped ([])
-    newProducts.value = Array.isArray(newRes.data) ? newRes.data : (newRes.data?.data ?? [])
-    promoProducts.value = Array.isArray(promoRes.data) ? promoRes.data : (promoRes.data?.data ?? [])
-  } catch (e) {
-    console.error('Failed to load home data:', e)
-  } finally {
-    loading.value = false
-    markAppReady()
-  }
+const chargement = reactive({
+  slides: true,
+  nouveautes: true,
+  promos: true,
+  categories: true,
 })
+
+function liste(reponse) {
+  // La réponse est soit paginée ({ data: [] }), soit déjà déballée ([]).
+  return Array.isArray(reponse.data) ? reponse.data : (reponse.data?.data ?? [])
+}
+
+// Volontairement pas de Promise.all ni de await global : chaque section se
+// débloque à son propre rythme. Le lancement est immédiat (pas dans onMounted)
+// pour ne pas perdre un tick de plus avant le premier octet.
+api.get('/products', { params: { new: true, per_page: 12 } })
+  .then((r) => { newProducts.value = liste(r) })
+  .catch((e) => console.error('Nouveautés :', e))
+  .finally(() => { chargement.nouveautes = false })
+
+api.get('/products', { params: { promo: true, per_page: 8 } })
+  .then((r) => { promoProducts.value = liste(r) })
+  .catch((e) => console.error('Promotions :', e))
+  .finally(() => { chargement.promos = false })
+
+categoryStore.fetchCategories().finally(() => { chargement.categories = false })
+promoStore.fetchSlides().finally(() => { chargement.slides = false })
+promoStore.fetchPromotions()
 </script>

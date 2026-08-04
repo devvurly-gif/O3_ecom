@@ -11,7 +11,7 @@
           class="flex gap-4 sm:gap-6 border border-divider p-4 sm:p-6"
         >
           <router-link :to="`/product/${item.slug}`" class="shrink-0">
-            <img :src="imageUrl(item.image)" :alt="item.title" class="h-24 w-24 sm:h-28 sm:w-28 object-cover bg-surface" />
+            <img :src="imageUrl(item.image)" :alt="item.title" width="112" height="112" loading="lazy" decoding="async" class="h-24 w-24 sm:h-28 sm:w-28 object-cover bg-surface" />
           </router-link>
           <div class="flex-1 min-w-0">
             <router-link :to="`/product/${item.slug}`" class="text-sm sm:text-base font-bold text-ink hover:text-accent-500 transition">

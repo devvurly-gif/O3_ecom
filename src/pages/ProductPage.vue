@@ -15,12 +15,12 @@
         <!-- Images -->
         <div>
           <div class="aspect-square bg-surface overflow-hidden cursor-zoom-in" @click="openLightbox(selectedImage)">
-            <img :src="imageUrl(currentImage)" :alt="store.product.title" class="h-full w-full object-cover" />
+            <img :src="imageUrl(currentImage)" :alt="store.product.title" width="800" height="800" fetchpriority="high" decoding="async" class="h-full w-full object-cover" />
           </div>
           <div v-if="images.length > 1" class="mt-4 grid grid-cols-5 gap-3">
             <button v-for="(img, i) in images" :key="i" @click="selectedImage = i"
               :class="['aspect-square overflow-hidden border-2 transition', selectedImage === i ? 'border-accent-500' : 'border-transparent hover:border-neutral-400']">
-              <img :src="imageUrl(img)" class="h-full w-full object-cover" />
+              <img :src="imageUrl(img)" alt="" width="160" height="160" loading="lazy" decoding="async" class="h-full w-full object-cover" />
             </button>
           </div>
         </div>

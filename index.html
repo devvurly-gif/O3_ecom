@@ -8,40 +8,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&display=swap" rel="stylesheet" />
-    <style>
-      #boot-loader {
-        position: fixed;
-        inset: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: #ffffff;
-        z-index: 9999;
-      }
-      #boot-loader .spinner {
-        width: 36px;
-        height: 36px;
-        border: 3px solid #ffe0d9;
-        border-top-color: #ec3013;
-        border-radius: 50%;
-        animation: boot-spin 0.7s linear infinite;
-      }
-      @keyframes boot-spin {
-        to { transform: rotate(360deg); }
-      }
-      #boot-loader.is-hidden {
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.25s ease;
-      }
-    </style>
   </head>
   <body class="antialiased">
+    <!-- Plus de boot-loader plein écran : il servait à masquer une application
+         qui ne se montait qu'après un aller-retour réseau, et gardait donc
+         l'écran figé plusieurs secondes. L'app se monte maintenant tout de
+         suite et affiche ses propres squelettes, section par section. -->
     <div id="app"></div>
-    <!-- Lives outside #app so Vue's mount (which replaces #app's content)
-         doesn't wipe it out — it's removed explicitly once the initial
-         page has finished fetching its data, see useAppReady.js. -->
-    <div id="boot-loader" aria-hidden="true"><div class="spinner"></div></div>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
