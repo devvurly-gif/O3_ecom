@@ -149,11 +149,11 @@ dans [T7-PERFORMANCE.md](T7-PERFORMANCE.md).
 
 1. **Remplacer axios par `fetch`** — 42 Ko gzip pour six GET JSON, c'est le
    plus gros morceau du bundle.
-3. **Variantes d'images côté ERP** — sans elles, `srcset` n'apporte rien. Le
+2. **Variantes d'images côté ERP** — sans elles, `srcset` n'apporte rien. Le
    logo est servi en 246×205 pour un affichage 34×34.
-4. **Filtre de disponibilité** — l'API n'expose pas le stock en critère ; il est
+3. **Filtre de disponibilité** — l'API n'expose pas le stock en critère ; il est
    calculé par un accesseur, pas par une colonne.
-5. **Nettoyer les configurations Nginx** — trois blocs matchent `shop.*`, dont
+4. **Nettoyer les configurations Nginx** — trois blocs matchent `shop.*`, dont
    un mort et un fichier legacy qui provoque un avertissement au démarrage.
 
 ---
