@@ -82,18 +82,14 @@
         @change="$emit('sort', $event.target.value)"
         class="input"
       >
-        <option value="">Par défaut</option>
-        <option value="newest">Plus récents</option>
-        <option value="price_asc">Prix croissant</option>
-        <option value="price_desc">Prix décroissant</option>
-        <option value="name">Nom A-Z</option>
+        <option v-for="o in optionsTri" :key="o.valeur" :value="o.valeur">{{ o.libelle }}</option>
       </select>
     </div>
   </aside>
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { currencySymbol } from '@/composables/useFormatPrice'
 
 const props = defineProps({
@@ -104,6 +100,29 @@ const props = defineProps({
   priceMin: { type: [Number, null], default: null },
   priceMax: { type: [Number, null], default: null },
   sortBy: { type: String, default: '' },
+  hasSearch: { type: Boolean, default: false },
+})
+
+/**
+ * Le tri par défaut de l'API dépend du contexte :
+ *  - avec un terme de recherche, elle classe par pertinence (correspondance
+ *    exacte SKU/EAN/titre d'abord) ;
+ *  - sans recherche, elle classe par date de création décroissante.
+ *
+ * L'ancienne liste proposait « Par défaut » ET « Plus récents », qui donnaient
+ * exactement le même résultat hors recherche — deux entrées pour un seul tri.
+ * On nomme donc l'option vide selon ce qu'elle fait réellement.
+ */
+const optionsTri = computed(() => {
+  const base = [
+    { valeur: 'price_asc', libelle: 'Prix croissant' },
+    { valeur: 'price_desc', libelle: 'Prix décroissant' },
+    { valeur: 'name', libelle: 'Nom A-Z' },
+  ]
+
+  return props.hasSearch
+    ? [{ valeur: '', libelle: 'Pertinence' }, { valeur: 'newest', libelle: 'Plus récents' }, ...base]
+    : [{ valeur: '', libelle: 'Plus récents' }, ...base]
 })
 
 const emit = defineEmits(['filterCategory', 'filterBrand', 'filterPrice', 'sort'])
