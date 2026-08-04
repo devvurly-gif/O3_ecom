@@ -141,3 +141,51 @@ Aucune image n'a de `srcset`, faute de variantes : l'API ne sert qu'une taille.
 
 Un `srcset` utile suppose que l'ERP génère des vignettes à l'upload. C'est un
 travail côté backend, sans quoi ajouter `srcset` n'apporterait rien.
+
+---
+
+## T8 — Parité UX de la page Boutique
+
+Tri, filtres, pagination et état URL existaient déjà. Deux défauts les rendaient
+bancals, tous deux vérifiés en production avant correction.
+
+**Requête dupliquée.** Chaque action chargeait les produits *et* modifiait
+l'URL, ce qui déclenchait un watcher qui rechargeait les produits : 2 appels
+identiques par clic de filtre. L'URL est désormais l'unique source de vérité —
+les actions n'écrivent que l'URL, le watcher est seul à charger. Mesuré après :
+1 requête par clic.
+
+**Bouton Retour cassé.** `router.replace` n'écrit pas d'entrée d'historique :
+depuis `/shop?category=6`, le retour renvoyait à l'accueil au lieu du filtre
+précédent. Passage à `push`. Vérifié : `?category=4` → Retour → `?category=6`,
+avec le rappel de filtre mis à jour.
+
+**Tri en doublon.** « Par défaut » et « Plus récents » donnaient le même
+résultat : hors recherche, l'API trie par `created_at desc` dans les deux cas.
+L'option vide est nommée selon ce qu'elle fait, et « Pertinence » n'apparaît
+que si une recherche est active — seul cas où l'API classe par pertinence.
+
+**Ajouts.** Rappel des filtres actifs, chacun retirable (un client arrivé par
+la recherche ne voyait pas pourquoi la liste était réduite) ; pagination avec
+précédent/suivant, première et dernière pages, ellipses — l'ancienne
+n'affichait que page ± 2 sans flèches, soit du clic page par page sur 14 pages.
+
+### Pagination plutôt que défilement infini
+
+Choix assumé : la pagination est partageable et compatible avec le bouton
+Retour, ce que le cahier des charges demande explicitement. Un défilement
+infini rend l'URL non reproductible, éloigne le pied de page (et donc les
+coordonnées de la boutique) et complique l'indexation. C'est aussi ce
+qu'utilisait l'ancien site WooCommerce.
+
+### Non fait : filtre de disponibilité
+
+`/api/ecom/products` n'expose aucun filtre de stock. Le stock est calculé par
+un accesseur sur la somme des `warehouseStocks`, pas par une colonne : le
+filtrer demande une sous-requête d'agrégation côté API. À faire côté backend
+avant de pouvoir l'exposer dans les filtres.
+
+### Non fait : bascule de densité de grille
+
+Marquée optionnelle dans l'audit, écartée pour garder le changement centré sur
+les défauts vérifiés.
