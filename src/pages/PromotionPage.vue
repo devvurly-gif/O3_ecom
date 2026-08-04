@@ -15,7 +15,7 @@
           class="card border border-divider hover:bg-neutral-100 transition"
         >
           <span class="tag tag-outline self-start">
-            {{ promo.type === 'percentage' ? `-${promo.value}%` : `-${promo.value} MAD` }}
+            {{ promo.type === 'percentage' ? `-${promo.value}%` : `-${formatPrice(promo.value)}` }}
           </span>
           <h3 class="card-title">{{ promo.name }}</h3>
           <p v-if="promo.description" class="card-body line-clamp-2">{{ promo.description }}</p>
@@ -47,6 +47,7 @@ import api from '@/api/axios'
 import ProductGrid from '@/components/product/ProductGrid.vue'
 import Pagination from '@/components/ui/Pagination.vue'
 import LoadingSpinner from '@/components/ui/LoadingSpinner.vue'
+import { formatPrice } from '@/composables/useFormatPrice'
 
 const props = defineProps({ slug: { type: String, default: '' } })
 

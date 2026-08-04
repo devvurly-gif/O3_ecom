@@ -75,7 +75,7 @@
                     class="flex items-center gap-2 px-4 py-2 text-sm text-ink hover:bg-neutral-100 hover:text-accent-500"
                   >
                     <span class="tag tag-accent font-bold">
-                      {{ promo.type === 'percentage' ? `-${promo.value}%` : `-${promo.value}` }}
+                      {{ promo.type === 'percentage' ? `-${promo.value}%` : `-${formatPrice(promo.value)}` }}
                     </span>
                     <span class="truncate">{{ promo.name }}</span>
                   </router-link>
@@ -138,6 +138,7 @@ import { useCartStore } from '@/stores/cartStore'
 import { useCategoryStore } from '@/stores/categoryStore'
 import { usePromoStore } from '@/stores/promoStore'
 import { useImageUrl } from '@/composables/useImageUrl'
+import { formatPrice } from '@/composables/useFormatPrice'
 import { ShoppingBagIcon, MagnifyingGlassIcon, ChevronDownIcon } from '@heroicons/vue/24/outline'
 
 const router = useRouter()

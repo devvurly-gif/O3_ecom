@@ -58,7 +58,7 @@
 
     <!-- Price range -->
     <div>
-      <h3 class="mb-3 text-sm font-extrabold text-ink uppercase tracking-wider">Prix (MAD)</h3>
+      <h3 class="mb-3 text-sm font-extrabold text-ink uppercase tracking-wider">Prix ({{ currencySymbol }})</h3>
       <form @submit.prevent="applyPrice" class="space-y-3">
         <div class="flex items-center gap-2">
           <div class="field flex-1">
@@ -94,6 +94,7 @@
 
 <script setup>
 import { ref, watch } from 'vue'
+import { currencySymbol } from '@/composables/useFormatPrice'
 
 const props = defineProps({
   categories: { type: Array, default: () => [] },

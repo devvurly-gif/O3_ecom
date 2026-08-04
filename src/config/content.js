@@ -15,6 +15,22 @@ export const content = {
     seeAll: 'Voir tout',
   },
 
+  /**
+   * Devise affichée aux clients.
+   *
+   * « DH » plutôt que « MAD » : c'est ce qu'utilisait l'ancienne boutique
+   * WooCommerce, c'est ce que Jadever écrit dans sa propre bannière
+   * (« Livraison gratuite pour 5000DH »), et c'est ce qu'un client marocain lit
+   * sur une étiquette. « MAD » est le code ISO 4217, réservé aux échanges
+   * bancaires et aux données.
+   *
+   * Changer `symbol` ici suffit à changer l'affichage partout.
+   */
+  currency: {
+    code: 'MAD',
+    symbol: 'DH',
+  },
+
   /** Produits dont le prix n'est pas encore saisi dans l'ERP. */
   price: {
     onRequest: 'Prix sur demande',

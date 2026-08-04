@@ -1,3 +1,5 @@
+import { content } from '@/config/content'
+
 /**
  * Autorité unique sur les prix du storefront : mise en forme ET disponibilité.
  *
@@ -30,14 +32,25 @@ export function isPurchasable(product, variant = null) {
   return hasPrice(effectivePrice(product, variant))
 }
 
-export function useFormatPrice() {
-  function formatPrice(price) {
-    return new Intl.NumberFormat('fr-MA', {
-      style: 'currency',
-      currency: 'MAD',
-      minimumFractionDigits: 2,
-    }).format(price ?? 0)
-  }
+// Mise en forme du nombre seul. `style: 'currency'` imposerait « MAD », le code
+// ISO, alors que la boutique affiche « DH » ; le rendu numérique est identique
+// dans les deux styles pour fr-MA (2.976,00), seul le suffixe change.
+const nombre = new Intl.NumberFormat('fr-MA', {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+})
 
-  return { formatPrice, hasPrice, effectivePrice, isPurchasable }
+/** Symbole affiché aux clients, décidé une seule fois dans content.js. */
+export const currencySymbol = content.currency.symbol
+
+/**
+ * « 2.976,00 DH ». Espace insécable : le montant et sa devise ne doivent
+ * jamais se retrouver sur deux lignes.
+ */
+export function formatPrice(price) {
+  return `${nombre.format(price ?? 0)} ${currencySymbol}`
+}
+
+export function useFormatPrice() {
+  return { formatPrice, currencySymbol, hasPrice, effectivePrice, isPurchasable }
 }
