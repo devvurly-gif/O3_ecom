@@ -28,6 +28,11 @@ const routes = [
     component: () => import('@/pages/CheckoutPage.vue'),
   },
   {
+    path: '/commande-rapide',
+    name: 'quick-order',
+    component: () => import('@/pages/QuickOrderPage.vue'),
+  },
+  {
     path: '/promotions',
     name: 'promotions',
     component: () => import('@/pages/PromotionPage.vue'),

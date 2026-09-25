@@ -83,6 +83,8 @@
               </div>
             </Transition>
           </div>
+
+          <router-link to="/commande-rapide" class="px-3 py-2 text-sm font-medium text-ink hover:text-accent-500 transition">Commande rapide</router-link>
         </nav>
 
         <!-- Right side -->
