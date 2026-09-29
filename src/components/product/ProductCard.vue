@@ -12,7 +12,7 @@
           height="400"
           loading="lazy"
           decoding="async"
-          class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+          class="h-full w-full object-contain transition duration-500 group-hover:scale-105"
         />
       </div>
 
