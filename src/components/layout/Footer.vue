@@ -9,7 +9,7 @@
             <div v-else class="flex h-[34px] w-[34px] items-center justify-center bg-accent-500 text-bg font-extrabold text-sm">O3</div>
             <span class="text-lg font-extrabold text-ink">{{ shopName }}</span>
           </div>
-          <p class="text-sm leading-relaxed text-neutral-700">{{ content.footer.tagline }}</p>
+          <p class="text-sm leading-relaxed text-neutral-700">{{ tagline }}</p>
         </div>
 
         <!-- Links -->
@@ -63,5 +63,6 @@ const { phone, email, address } = useShopContact()
 
 const shop = computed(() => config?.shop ?? {})
 const shopName = computed(() => shop.value.name || 'O3 Store')
+const tagline = computed(() => config?.ecommerce?.shop_tagline || content.footer.tagline)
 const logoUrl = computed(() => shop.value.logo ? imageUrl(shop.value.logo) : null)
 </script>
