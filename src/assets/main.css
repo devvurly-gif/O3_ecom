@@ -49,6 +49,9 @@ h1, h2, h3, h4, h5, h6 {
   outline-offset: 2px;
 }
 
+/* Fond des photos produit, de la grille des catégories et du panier : blanc (les champs et cartes gardent --color-surface). */
+.bg-surface { background-color: #ffffff; }
+
 /* — component classes (Modernist design system) — */
 
 .hr {
